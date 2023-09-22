@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "scheme": "acme",
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "name": "DTAT-Elearning-Mobile",
+    "slug": "DTAT-Elearning-Mobile"
+  }
+}
