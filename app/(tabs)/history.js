@@ -1,37 +1,45 @@
-import { Link, Stack } from "expo-router";
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
+  StyleSheet,
+  Image,
+} from "react-native";
+import React from "react";
+import Theme1 from "../theme/Theme1";
 
-const ScreenHeaderButton = ({ text, to }) => {
-    return (
-        <Link href={to} asChild >
-            <TouchableOpacity>
-                <Text>{text}</Text>
-            </TouchableOpacity>
-        </Link>
-    )
-}
+const content = () => {
+  return (
+    <SafeAreaView>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <Text>History</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+// const ScreenHeaderButton = ({ text, to }) => {
+//     return (
+//         <Link href={to} asChild >
+//             <TouchableOpacity>
+//                 <Text>{text}</Text>
+//             </TouchableOpacity>
+//         </Link>
+//     )
+// }
 
 const History = () => {
-    return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <Stack.Screen
-                options={{
-                    headerTitleAlign: 'center',
-                    headerTitle: '',
-                    headerShadowVisible: false,
-                    // headerLeft: () => <ScreenHeaderButton text="Menu" to="/learning" />,
-                    // headerRight: () => <ScreenHeaderButton text="Profile" to="/learning" />,
-                    headerTitle: () => <ScreenHeaderButton text="LOGO" to="/home" />,
-                }}
-            />
-
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={{ flex: 1, padding: 10, alignItems: 'center' }}>
-                    <Text> History </Text>
-                </View>
-            </ScrollView>
-        </SafeAreaView>
-    )
+    return <Theme1 content={content()} />;
 }
 
 export default History;
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 10, marginTop: 20, alignItems: "center" },
+});
