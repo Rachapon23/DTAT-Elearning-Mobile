@@ -19,7 +19,7 @@ const Details = () => {
     const params = useLocalSearchParams()
     const router = useRouter();
     const [refreshing, setRefreshing] = useState(null);
-    const { data, isLoading, error, refetch } = useFetch('list-plant')
+    const { data, isLoading, error, refetch } = useFetch('/list-plant')
 
     const onRefresh = () => {
 
