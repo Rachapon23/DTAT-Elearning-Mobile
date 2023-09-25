@@ -17,7 +17,7 @@ import useFetch from "../hook/useFetch";
 import Theme1 from "./theme/Theme1";
 import React, { useState } from "react";
 // import Paginator from "./slider/Paginator";
-import Slider from "./slider/Slider";
+import Slider from "./component/Slider";
 
 const AboutButton = ({ text, to }) => {
   return (
