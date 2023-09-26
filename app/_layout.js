@@ -52,32 +52,45 @@ const Layout = () => {
           headerTitleAlign: "center",
           headerTitle: "",
           headerShadowVisible: false,
-          //   headerLeft: () => <ScreenHeaderButton text="Menu" to="/learning" />,
+          headerLeft: () => <ScreenHeaderButton text="Ex" to="/exmaple" />,
           headerRight: () => login(),
           headerTitle: () => logo(),
         }}
       />
-      <Stack.Screen name="login" 
-       options={{
-        headerTitleAlign: 'center',
-        headerTitle: '',
-        headerShadowVisible: false,
-        headerBackVisible: false,
-        headerLeft: () => <ScreenHeaderButton text="Back" to="/home" />,
-        // headerRight: () => login(),
-        headerTitle: () => logo(),
-    }}
+      <Stack.Screen name="login"
+        options={{
+          headerTitleAlign: 'center',
+          headerTitle: '',
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerLeft: () => <ScreenHeaderButton text="Back" to="/home" />,
+          // headerRight: () => login(),
+          headerTitle: () => logo(),
+        }}
       />
       <Stack.Screen
         name="about-us"
         options={{
-            headerTitleAlign: 'center',
-            headerTitle: '',
-            headerShadowVisible: false,
-            headerBackVisible: false,
-            headerLeft: () => <ScreenHeaderButton text="Back" to="/home" />,
-            headerRight: () => login(),
-            headerTitle: () => logo(),
+          headerTitleAlign: 'center',
+          headerTitle: '',
+          headerShadowVisible: false,
+          headerBackVisible: false,
+          headerLeft: () => <ScreenHeaderButton text="Back" to="/home" />,
+          headerRight: () => login(),
+          headerTitle: () => logo(),
+        }}
+      />
+
+      {/* Exmaple page*/}
+      <Stack.Screen
+        name="example"
+        options={{
+          headerTitleAlign: "center",
+          headerTitle: "",
+          headerShadowVisible: false,
+          headerLeft: () => <ScreenHeaderButton text="Home" to="/" />,
+          headerRight: () => login(),
+          headerTitle: () => logo(),
         }}
       />
     </Stack>
