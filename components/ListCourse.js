@@ -11,18 +11,24 @@ import {
   Image,
 } from "react-native";
 import React from "react";
-import { usePathname, useSegments } from "expo-router";
+import { useRouter } from "expo-router";
 
-const ListCourse = ({ item }) => {
+const ListCourse = ({ item, to = null}) => {
   const width = Dimensions.get("window").width;
-  const networkImage = { uri: "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"}
+  const networkImage = { uri: "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png" }
   const image = item?.src ? networkImage : require("public/student.webp")
+  const router = useRouter()
+
+  const navigate = (href) => {
+    if (!href) return
+    router.push(href)
+  }
 
   return (
     <View>
       <TouchableOpacity
         style={[styles.box, { width: width }]}
-        onPress={() => console.log("NEXT: ", item.id)}
+        onPress={() => { console.log("NEXT: ", item.id); navigate(to) }}
       >
         <View style={styles.inbox}>
           <View style={{ height: "100%", width: "50%" }}>

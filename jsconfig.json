@@ -4,6 +4,8 @@
       "paths": {
         "public/*": ["public/*"],
         "hook/*": ["hook/*"],
+        "components/*": ["components/*"],
+        "theme/*": ["theme/*"],
       }
     }
   }

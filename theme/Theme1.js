@@ -5,7 +5,7 @@ const Theme1 = ({ content }) => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require("../../public/background.jpg")}
+        source={require("public/background.jpg")}
         resizeMode="cover"
         style={styles.imageBackground}
         imageStyle={{

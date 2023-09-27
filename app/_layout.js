@@ -47,12 +47,30 @@ const Layout = () => {
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
+        name="enroll/[id]"
+        options={{
+          headerTitle: "Enroll",
+        }}
+      />
+      <Stack.Screen
+        name="course/[id]"
+        options={{
+          headerTitle: "Course",
+        }}
+      />
+      <Stack.Screen
+        name="history/[id]"
+        options={{
+          headerTitle: "History",
+        }}
+      />
+      <Stack.Screen
         name="home"
         options={{
           headerTitleAlign: "center",
           headerTitle: "",
           headerShadowVisible: false,
-          headerLeft: () => <ScreenHeaderButton text="Ex" to="/exmaple" />,
+          headerLeft: () => <ScreenHeaderButton text="Example" to="/example" />,
           headerRight: () => login(),
           headerTitle: () => logo(),
         }}
@@ -88,7 +106,7 @@ const Layout = () => {
           headerTitleAlign: "center",
           headerTitle: "",
           headerShadowVisible: false,
-          headerLeft: () => <ScreenHeaderButton text="Home" to="/" />,
+          headerLeft: () => null,
           headerRight: () => login(),
           headerTitle: () => logo(),
         }}
