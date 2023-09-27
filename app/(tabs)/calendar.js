@@ -11,7 +11,7 @@ import {
   Dimensions,
 } from "react-native";
 import React, { useState } from "react";
-import Theme1 from "../theme/Theme1";
+import Theme1 from "theme/Theme1";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 
 const content = () => {
@@ -31,16 +31,14 @@ const content = () => {
               onDayPress={(day) => {
                 setSelected(day.dateString);
               }}
+              
+              markingType={'period'}
               markedDates={{
                 [selected]: {
                   selected: true,
                   disableTouchEvent: true,
                   selectedDotColor: "orange",
                 },
-              }}
-              
-              markingType={'period'}
-              markedDates={{
                 "2023-09-01": {
                   startingDay: true,
                   color: "lightgreen",

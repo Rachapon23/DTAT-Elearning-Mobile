@@ -13,6 +13,8 @@ module.exports = function (api) {
           alias: {
             public: "./public",
             hook: "./hook",
+            components: "./components",
+            theme: "./theme",
           }
         }
       ],

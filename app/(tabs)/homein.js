@@ -10,8 +10,8 @@ import {
   Image,
 } from "react-native";
 import React from "react";
-import Theme1 from "../theme/Theme1";
-import Slider from "../component/Slider";
+import Theme1 from "theme/Theme1";
+import Slider from "components/Slider";
 import { Link, Stack, useRouter } from "expo-router";
 
 const AboutButton = ({ text, to }) => {

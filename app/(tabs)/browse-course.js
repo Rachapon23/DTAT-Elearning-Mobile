@@ -11,9 +11,10 @@ import {
   Dimensions,
 } from "react-native";
 import React from "react";
-import Theme1 from "../theme/Theme1";
-import ListCourse from "../component/ListCourse";
+import ListCourse from "components/ListCourse";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Theme1 from "theme/Theme1";
+
 const content = () => {
   const items = [
     {
@@ -63,7 +64,7 @@ const content = () => {
           </View>
           <FlatList
             data={items}
-            renderItem={({ item }) => <ListCourse item={item} />}
+            renderItem={({ item }) => <ListCourse item={item} to={`/enroll/${item.id}`}/>}
           />
         </View>
       </ScrollView>

@@ -11,7 +11,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Stack, Link } from "expo-router";
-import Theme1 from "./theme/Theme1";
+import Theme1 from "../theme/Theme1";
 import React, { useState } from "react";
 import { router } from 'expo-router';
 

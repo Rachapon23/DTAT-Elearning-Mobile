@@ -11,7 +11,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Link, Stack } from "expo-router";
-import Theme1 from "./theme/Theme1";
+import Theme1 from "../theme/Theme1";
 
 const ScreenHeaderButton = ({ text, to }) => {
   return (

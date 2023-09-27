@@ -10,8 +10,8 @@ import {
   Image,
 } from "react-native";
 import React from "react";
-import Theme1 from "../theme/Theme1";
-import ListCourse from "../component/ListCourse";
+import Theme1 from "theme/Theme1";
+import ListCourse from "components/ListCourse";
 
 const content = () => {
   const items = [
@@ -43,7 +43,7 @@ const content = () => {
         <View style={styles.container}>
         <FlatList
               data={items}
-              renderItem={({ item }) => <ListCourse item={item}/>}
+              renderItem={({ item }) => <ListCourse item={item} to={`history/${item.id}`}/>}
             />
         </View>
       </ScrollView>

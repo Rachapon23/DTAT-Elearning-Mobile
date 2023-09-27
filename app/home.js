@@ -14,10 +14,10 @@ import {
 } from "react-native";
 import { Link, Stack, useRouter } from "expo-router";
 import useFetch from "../hook/useFetch";
-import Theme1 from "./theme/Theme1";
+import Theme1 from "../theme/Theme1";
 import React, { useState } from "react";
 // import Paginator from "./slider/Paginator";
-import Slider from "./component/Slider";
+import Slider from "../components/Slider";
 
 const AboutButton = ({ text, to }) => {
   return (

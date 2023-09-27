@@ -19,7 +19,7 @@ const Slider = ({ items }) => {
       <View style={{paddingHorizontal:10}}>
         <Image
           style={[styles.Announce, { opacity: opacity, width: width-20 }]}
-          source={require("../../public/student.webp")}
+          source={require("public/student.webp")}
         />
       </View>
     );

@@ -11,8 +11,8 @@ import {
   Image,
 } from "react-native";
 import React from "react";
-import Theme1 from "../theme/Theme1";
-import ListCourse from "../component/ListCourse";
+import Theme1 from "theme/Theme1";
+import ListCourse from "components/ListCourse";
 
 const content = () => {
   const items = [
@@ -60,23 +60,23 @@ const content = () => {
     },
     {
       id: 7,
-      title: "course 4",
+      title: "course 7",
       detail:
-        "test course 4 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
+        "test course 7 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
       src: "../../../public/4259647.jpg",
     },
     {
       id: 8,
-      title: "course 5",
+      title: "course 8",
       detail:
-        "test course 5 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
+        "test course 8 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
       src: "../../../public/4259647.jpg",
     },
     {
       id: 9,
-      title: "course 6",
+      title: "course 9",
       detail:
-        "test course 6 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
+        "test course 9 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
       src: "../../../public/4259647.jpg",
     },
   ];
@@ -89,7 +89,7 @@ const content = () => {
             {/* <Text>111</Text> */}
             <FlatList
               data={items}
-              renderItem={({ item }) => <ListCourse item={item} />}
+              renderItem={({ item }) => <ListCourse item={item} to={`course/${item.id}`}/>}
             />
           </View>
         </ScrollView>
