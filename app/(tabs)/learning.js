@@ -81,18 +81,19 @@ const content = () => {
     },
   ];
 
+  // NOTE: if we use FlatList in ScrollView this error "VirtualizedLists should never be nested inside plain ScrollViews" will appear
   return (
     <View>
       <SafeAreaView>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        {/* <ScrollView showsVerticalScrollIndicator={false}> */}
           <View style={styles.container}>
-            {/* <Text>111</Text> */}
             <FlatList
               data={items}
               renderItem={({ item }) => <ListCourse item={item} to={`course/${item.id}`}/>}
+              showsVerticalScrollIndicator={false}
             />
           </View>
-        </ScrollView>
+        {/* </ScrollView> */}
       </SafeAreaView>
     </View>
   );
@@ -115,5 +116,5 @@ const Learning = () => {
 export default Learning;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, marginTop: 20, alignItems: "center" },
+  container: { padding: 10, marginTop: 20, alignItems: "center" },
 });
