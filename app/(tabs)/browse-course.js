@@ -42,32 +42,34 @@ const content = () => {
 
   const width = Dimensions.get("window").width;
 
+  // NOTE: if we use FlatList in ScrollView this error "VirtualizedLists should never be nested inside plain ScrollViews" will appear
   return (
     <SafeAreaView>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
-          <View
-            style={{ paddingHorizontal: 20, marginBottom: 20, width: width }}
-          >
-            <View style={styles.searchview}>
-              <Ionicons
-                name={"search-outline"}
-                size={20}
-                color={"gray"}
-                style={{ marginRight: 10 }}
-              />
-              <TextInput
-                style={styles.inputsearch}
-                placeholder="search"
-              ></TextInput>
-            </View>
+      {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+      <View style={styles.container}>
+        <View
+          style={{ paddingHorizontal: 20, marginBottom: 20, width: width }}
+        >
+          <View style={styles.searchview}>
+            <Ionicons
+              name={"search-outline"}
+              size={20}
+              color={"gray"}
+              style={{ marginRight: 10 }}
+            />
+            <TextInput
+              style={styles.inputsearch}
+              placeholder="search"
+            ></TextInput>
           </View>
-          <FlatList
-            data={items}
-            renderItem={({ item }) => <ListCourse item={item} to={`/enroll/${item.id}`}/>}
-          />
         </View>
-      </ScrollView>
+        <FlatList
+          data={items}
+          renderItem={({ item }) => <ListCourse item={item} to={`/enroll/${item.id}`} />}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+      {/* </ScrollView> */}
     </SafeAreaView>
   );
 };
@@ -89,7 +91,7 @@ const BrowseCourse = () => {
 export default BrowseCourse;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10, marginTop: 20, alignItems: "center" },
+  container: { padding: 10, marginTop: 20, alignItems: "center" },
   searchview: {
     borderColor: "#000",
     borderWidth: 1,
