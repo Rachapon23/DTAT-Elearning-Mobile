@@ -13,13 +13,15 @@ import {
 import React, { useState } from "react";
 import Theme1 from "theme/Theme1";
 import { Calendar, LocaleConfig } from "react-native-calendars";
+import useFetch from "../../hook/useFetch";
+import ListCalendar from "components/ListCalendar";
 
 const content = () => {
+  const { data, isLoading, error, refetch } = useFetch(`list-calendar-student`);
   const [selected, setSelected] = React.useState("");
-  const width = Dimensions.get("window").width;
+  const WIDTH = Dimensions.get("window").width;
+  console.log(data)
   return (
-    <SafeAreaView>
-      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View
             style={{
@@ -31,47 +33,51 @@ const content = () => {
               onDayPress={(day) => {
                 setSelected(day.dateString);
               }}
-              
-              markingType={'period'}
+              markingType={"period"}
               markedDates={{
                 [selected]: {
                   selected: true,
                   disableTouchEvent: true,
                   selectedDotColor: "orange",
                 },
-                "2023-09-01": {
+                "2023-10-01": {
                   startingDay: true,
                   color: "lightgreen",
                 },
-                "2023-09-02": {
+                "2023-10-02": {
                   marked: true,
                   color: "lightgreen",
                 },
-                "2023-09-03": {
+                "2023-10-03": {
                   endingDay: true,
                   marked: true,
                   color: "lightgreen",
                 },
-                "2023-09-20": {
+                "2023-10-20": {
                   startingDay: true,
                   color: "lightgreen",
                 },
-                "2023-09-21": {
+                "2023-10-21": {
                   marked: true,
                   color: "lightgreen",
                 },
-                "2023-09-22": {
+                "2023-10-22": {
                   endingDay: true,
                   marked: true,
                   color: "lightgreen",
                 },
               }}
-              style={[styles.calendar, { width: width - 20 }]}
+              style={[styles.calendar, { width: WIDTH - 20 }]}
+            />
+          </View>
+          <View>
+          <FlatList
+              data={data}
+              renderItem={({ item }) => <ListCalendar item={item}/>}
+              showsVerticalScrollIndicator={false}
             />
           </View>
         </View>
-      </ScrollView>
-    </SafeAreaView>
   );
 };
 
@@ -95,7 +101,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 10, marginTop: 20, alignItems: "center" },
   calendar: {
     borderRadius: 5,
-    backgroundColor: "rgba(128,128,128, 0.1)",
+    backgroundColor: "rgba(159, 187, 246, 0.2)",
     height: 320,
   },
 });
