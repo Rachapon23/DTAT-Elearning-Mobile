@@ -86,13 +86,13 @@ const content = () => {
     <View>
       <SafeAreaView>
         {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-          <View style={styles.container}>
-            <FlatList
-              data={items}
-              renderItem={({ item }) => <ListCourse item={item} to={`course/${item.id}`}/>}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
+        <View style={styles.container}>
+          <FlatList
+            data={items}
+            renderItem={({ item }) => <ListCourse item={item} to={`course/${item.id}`} />}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
         {/* </ScrollView> */}
       </SafeAreaView>
     </View>

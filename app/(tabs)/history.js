@@ -41,13 +41,13 @@ const content = () => {
   return (
     <SafeAreaView>
       {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-        <View style={styles.container}>
+      <View style={styles.container}>
         <FlatList
-              data={items}
-              renderItem={({ item }) => <ListCourse item={item} to={`history/${item.id}`}/>}
-              showsVerticalScrollIndicator={false}
-            />
-        </View>
+          data={items}
+          renderItem={({ item }) => <ListCourse item={item} to={`history/${item.id}`} />}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
       {/* </ScrollView> */}
     </SafeAreaView>
   );
@@ -64,7 +64,7 @@ const content = () => {
 // }
 
 const History = () => {
-    return <Theme1 content={content()} />;
+  return <Theme1 content={content()} />;
 }
 
 export default History;
