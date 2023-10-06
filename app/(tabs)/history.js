@@ -70,7 +70,7 @@ const content = () => {
 // }
 
 const History = () => {
-    return <Theme1 content={content()} />;
+  return <Theme1 content={content()} />;
 }
 
 export default History;
