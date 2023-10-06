@@ -144,7 +144,7 @@ const PopularCourse = () => {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
   ];
 
-  const { data, isLoading, error, refetch } = useFetch("list-plant");
+  const { data, isLoading, error, refetch } = useFetch({ method: "GET", endpoint: "list-plant" });
 
   const displayData = () => {
     if (!state) return <ActivityIndicator size="large" />;
@@ -201,7 +201,14 @@ const Home = () => {
 
 
 const content = () => {
-  const { data, isLoading, error, refetch } = useFetch("get-home");
+  // const { data, isLoading, error, refetch } = useFetch({ method: "GET", endpoint: "get-home" });
+
+  const fetch = useFetch();
+  fetch.fetchData({ method: "GET", endpoint: "get-sdsdsd" }).then((data) => {
+    fetch.fetchData({ method: "GET", endpoint: "get-sdsdsd" })
+  })
+
+
   const announce = data?.announce;
   const course_public = data?.course_public;
   const course_private = data?.course_private;
