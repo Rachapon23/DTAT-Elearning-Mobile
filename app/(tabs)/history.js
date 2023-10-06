@@ -7,13 +7,17 @@ import {
   TextInput,
   FlatList,
   StyleSheet,
+  Dimensions,
   Image,
 } from "react-native";
 import React from "react";
 import Theme1 from "theme/Theme1";
-import ListCourse from "components/ListCourse";
+import ListActivity from "components/ListActivity";
+import useFetch from "../../hook/useFetch";
 
 const content = () => {
+  const { data, isLoading, error, refetch } = useFetch("list-activity?search=user:650d741a0056971b4f027af9&fetch=-ans,-__v&pops=path:course$select:name exam image type completed");
+
   const items = [
     {
       id: 1,
@@ -39,17 +43,19 @@ const content = () => {
   ];
   // NOTE: if we use FlatList in ScrollView this error "VirtualizedLists should never be nested inside plain ScrollViews" will appear
   return (
-    <SafeAreaView>
-      {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-      <View style={styles.container}>
-        <FlatList
-          data={items}
-          renderItem={({ item }) => <ListCourse item={item} to={`history/${item.id}`} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-      {/* </ScrollView> */}
-    </SafeAreaView>
+    <View>
+      <SafeAreaView>
+        {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+          <View style={styles.container}>
+            <FlatList
+              data={data}
+              renderItem={({ item }) => <ListActivity item={item} to={`course/${item?.course?._id}`} status_course={1}/>}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+        {/* </ScrollView> */}
+      </SafeAreaView>
+    </View>
   );
 };
 

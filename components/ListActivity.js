@@ -18,7 +18,7 @@ const WIDTH = Dimensions.get("window").width;
 const DEFAULT_IMAGE =
   "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
-const ListCourse = ({ item, to = null }) => {
+const ListCourse = ({ item, to = null,status_course }) => {
 
   const router = useRouter();
 
@@ -26,6 +26,8 @@ const ListCourse = ({ item, to = null }) => {
     if (!href) return;
     router.push(href);
   };
+  // console.log(item)
+  if (status_course == 0 && item?.result == 0) {
     return (
       <View>
         <TouchableOpacity
@@ -39,25 +41,63 @@ const ListCourse = ({ item, to = null }) => {
             <View style={{ height: "100%", width: "50%" }}>
               <Image
                 source={{
-                  uri: item?.image?.name
-                    ? REACT_APP_IMG + "/course/" + item?.image?.name
+                  uri: item?.course?.image?.name
+                    ? REACT_APP_IMG + "/course/" + item?.course?.image?.name
                     : DEFAULT_IMAGE,
                 }}
                 style={styles.image}
               />
             </View>
             <View style={{ height: "100%", width: "50%", padding: 10 }}>
-              <Text style={styles.header}>{item?.name}</Text>
+              <Text style={styles.header}>{item?.course?.name}</Text>
               <View style={styles.badge}>
                 <Text style={styles.body}>
-                  {item?.type ? "Public" : "Private"}
+                  {item?.course?.type ? "Public" : "Private"}
                 </Text>
               </View>
+              {/* <Text style={styles.body}>{item?.result}</Text> */}
             </View>
           </View>
         </TouchableOpacity>
       </View>
     );
+  }else if(status_course == 1 && item?.result >= 1){
+    return (
+      <View>
+        <TouchableOpacity
+          style={[styles.box, { width: WIDTH - 20 }]}
+          onPress={() => {
+            console.log("NEXT: ", item?._id);
+            navigate(to);
+          }}
+        >
+          <View style={styles.inbox}>
+            <View style={{ height: "100%", width: "50%" }}>
+              <Image
+                source={{
+                  uri: item?.course?.image?.name
+                    ? REACT_APP_IMG + "/course/" + item?.course?.image?.name
+                    : DEFAULT_IMAGE,
+                }}
+                style={styles.image}
+              />
+            </View>
+            <View style={{ height: "100%", width: "50%", padding: 10 }}>
+              <Text style={styles.header}>{item?.course?.name}</Text>
+              <View style={styles.badge}>
+                <Text style={styles.body}>
+                  {item?.course?.type ? "Public" : "Private"}
+                </Text>
+              </View>
+              {/* <Text style={styles.body}>{item?.result}</Text> */}
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  } else {
+    return;
+  }
 };
 
 export default ListCourse;

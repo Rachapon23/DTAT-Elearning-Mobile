@@ -11,13 +11,15 @@ import {
   Dimensions,
   Image,
   Animated,
+  Button,
 } from "react-native";
 import { Link, Stack, useRouter } from "expo-router";
 import useFetch from "../hook/useFetch";
 import Theme1 from "../theme/Theme1";
 import React, { useState } from "react";
 // import Paginator from "./slider/Paginator";
-import Slider from "../components/Slider";
+import Slider_announce from "../components/Slider_announce";
+import Slider_course from "../components/Slider_course";
 
 const AboutButton = ({ text, to }) => {
   return (
@@ -197,9 +199,14 @@ const Home = () => {
   );
 };
 
+
 const content = () => {
+  const { data, isLoading, error, refetch } = useFetch("get-home");
+  const announce = data?.announce;
+  const course_public = data?.course_public;
+  const course_private = data?.course_private;
   const items = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
-  //   const width = Dimensions.get("window").width;
+  // console.log("announce:: ",data?.course_public);
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -216,19 +223,22 @@ const content = () => {
           <AboutButton text="About Us" to="/about-us" />
         </View>
         <View style={styles.view_slider}>
-          <Slider items={items} />
-        </View>
-        <View style={styles.view_slider}>
-          <Text style={styles.text_status_course}>Private Course</Text>
-          <Slider items={items} />
+          <Slider_announce items={announce} />
         </View>
         <View style={styles.view_slider}>
           <Text style={styles.text_status_course}>Public Course</Text>
-          <Slider items={items} />
+          <Slider_course items={course_public} />
+        </View>
+        <View style={styles.view_slider}>
+          <Text style={styles.text_status_course}>Private Course</Text>
+          <Slider_course items={course_private} />
         </View>
         <View style={{ height: 40, padding: 10 }}>
           <Text>version 1.0.0</Text>
         </View>
+        {/* <PopularCourse/> */}
+        {/* <Button title="Click" onPress={fat()}> */}
+        {/* </Button> */}
       </ScrollView>
     </SafeAreaView>
   );
