@@ -28,12 +28,12 @@ const AboutButton = ({ text, to }) => {
 };
 
 const content = () => {
-  const { data, isLoading, error, refetch } = useFetch("get-home");
+  const { data, isLoading, error, refetch } = useFetch({ endpoint: "get-home" });
   const announce = data?.announce;
   const course_public = data?.course_public;
   const course_private = data?.course_private;
   const items = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
-//   const width = Dimensions.get("window").width;
+  //   const width = Dimensions.get("window").width;
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -60,8 +60,8 @@ const content = () => {
           <Text style={styles.text_status_course}>Private Course</Text>
           <Slider_course items={course_private} />
         </View>
-        <View style={{height:40,padding:10}}>
-            <Text>version 1.0.0</Text>
+        <View style={{ height: 40, padding: 10 }}>
+          <Text>version 1.0.0</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -77,9 +77,9 @@ export default home;
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 10, marginTop: 20, alignItems: "center" },
   text_title: { fontSize: 22, color: "#14347d" },
-  text_status_course: { fontSize: 18, color: "#14347d" ,textAlign:"center",  marginBottom: 10, },
+  text_status_course: { fontSize: 18, color: "#14347d", textAlign: "center", marginBottom: 10, },
   text_title_sub: { fontSize: 16, color: "#000", marginTop: 10 },
-  view_slider:{
+  view_slider: {
     marginTop: 20,
   },
   button_aboutus: {
