@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { REACT_APP_API } from "@env";
 const AUTHTOKEN =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0bmFtZSI6IlJhY2hhcG9uIiwicm9sZSI6ImFkbWluIiwidXNlcl9pZCI6IjY1MGQ3NDFhMDA1Njk3MWI0ZjAyN2FmOSJ9LCJpYXQiOjE2OTYxNzMzOTksImV4cCI6MTY5NjI1OTc5OX0.9Bpt7FozLKCyGtUOrxIpHoi1iF21Z8ZwKf30-pf67WQ";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0bmFtZSI6IlJhY2hhcG9uIiwicm9sZSI6ImFkbWluIiwidXNlcl9pZCI6IjY1MGQ3NDFhMDA1Njk3MWI0ZjAyN2FmOSJ9LCJpYXQiOjE2OTY2MDc5MDAsImV4cCI6MTY5NjY5NDMwMH0.59pZRJFQ4IKActUrbuy9oQ9IHcgS7En3nko8xUhtFno";
 
-const useFetch = (method = 'GET', endpoint, query = [], authtoken = null) => {
+const useFetch = (method = 'GET', endpoint, query = [], authtoken = AUTHTOKEN) => {
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
     const [error, setError] = useState(null);
 
-    const fetchData = async (method, endpoint, query = [], authtoken = null) => {
+    const fetchData = async (method, endpoint, query = [], authtoken = AUTHTOKEN) => {
         const options = {
             method: method,
             url: `${REACT_APP_API}/${endpoint}`,

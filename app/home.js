@@ -199,9 +199,13 @@ const Home = () => {
   );
 };
 
-
 const content = () => {
-  const { data, isLoading, error, refetch } = useFetch("get-home");
+  // const { data, isLoading, error, refetch } = useFetch({ method: "GET", endpoint: "get-home" });
+  const [data, setData] = useState([]);
+  const fetch = useFetch();
+  fetch.fetchData({ method: "GET", endpoint: "get-home" }).then((data) => {
+    console.log(data);
+  });
   const announce = data?.announce;
   const course_public = data?.course_public;
   const course_private = data?.course_private;
