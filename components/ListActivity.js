@@ -33,7 +33,7 @@ const ListCourse = ({ item, to = null,status_course }) => {
         <TouchableOpacity
           style={[styles.box, { width: WIDTH - 20 }]}
           onPress={() => {
-            console.log("NEXT: ", item?._id);
+            // console.log("NEXT: ", item?._id);
             navigate(to);
           }}
         >
@@ -67,7 +67,7 @@ const ListCourse = ({ item, to = null,status_course }) => {
         <TouchableOpacity
           style={[styles.box, { width: WIDTH - 20 }]}
           onPress={() => {
-            console.log("NEXT: ", item?._id);
+            // console.log("NEXT: ", item?._id);
             navigate(to);
           }}
         >

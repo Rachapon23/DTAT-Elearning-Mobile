@@ -16,7 +16,7 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
 const DEFAULT_IMAGE = "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png"
 
 const CarouselCardItem = ({ item, index }) => {
-  console.log("ITEM URL:: ", REACT_APP_IMG + item?.url )
+  // console.log("ITEM URL:: ", REACT_APP_IMG + item?.url )
 
   return (
     <View style={styles.container} key={index}>
