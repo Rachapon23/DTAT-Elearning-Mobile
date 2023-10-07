@@ -30,8 +30,8 @@ const ScreenHeaderButton = ({ text, to }) => {
 };
 
 const CarouselCardItem = ({ item, index }) => {
-  console.log("ITEM",index,":: ",item?.image?.name)
-  console.log("ITEM URL:: ",REACT_APP_IMG+"/course/"+item?.image?.name)
+  // console.log("ITEM",index,":: ",item?.image?.name)
+  // console.log("ITEM URL:: ",REACT_APP_IMG+"/course/"+item?.image?.name)
   return (
     <View style={styles.container} key={index}>
       <View style={styles.course}>

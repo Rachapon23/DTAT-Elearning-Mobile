@@ -22,7 +22,7 @@ const content = () => {
   const { data, isLoading, error, refetch } = useFetch({ endpoint: `list-calendar-student`, authtoken: token });
   const [selected, setSelected] = React.useState("");
   const WIDTH = Dimensions.get("window").width;
-  console.log(data)
+  // console.log(data)
   return (
     <View style={styles.container}>
       <View

@@ -15,6 +15,9 @@ import Theme1 from "../theme/Theme1";
 import React, { useState } from "react";
 import { router } from 'expo-router';
 
+import * as SecureStore from 'expo-secure-store';
+import useFetch from "hook/useFetch";
+
 const ScreenHeaderButton = ({ text, to }) => {
   return (
     <Link href={to} asChild>
@@ -26,14 +29,32 @@ const ScreenHeaderButton = ({ text, to }) => {
 };
 
 const content = () => {
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const fetch = useFetch()
 
-  const handleLogIn = () => {
-    console.log("username: ",username);
-    console.log("password: ",password);
-    router.replace('/homein');
+  const handleLogIn = async () => {
+    console.log("username: ", username);
+    console.log("password: ", password);
+
+    const payload = {
+      employee: username,
+      password,
+    }
+
+    const data = await fetch.fetchData({ method: 'POST', endpoint: 'login', payload })
+    if (!data?.error) {
+      await SecureStore.setItemAsync('token', data.token)
+      await SecureStore.setItemAsync('firstname', data.payload.user.firstname)
+      await SecureStore.setItemAsync('role', data.payload.user.role)
+      await SecureStore.setItemAsync('user_id', data.payload.user.user_id)
+      router.replace('/homein');
+    }
+    else {
+      alert(data?.error)
+    }
   };
+
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -53,7 +74,7 @@ const content = () => {
                 style={styles.input}
                 onChangeText={setPassword}
                 value={password}
-                secureTextEntry 
+                secureTextEntry
               />
             </View>
           </View>
