@@ -21,7 +21,7 @@ const DEFAULT_IMAGE =
 const content = () => {
   const [teacherProfile, setTeacherProfile] = useState();
   const { id } = useLocalSearchParams();
-  const { data, isLoading, error, refetch } = useFetch(`get-course/${id}`);
+  const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
   if (data) {
     console.log(data?.teacher);
     // const { data2, isLoading2, error2 } = useFetch(

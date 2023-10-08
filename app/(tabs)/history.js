@@ -16,7 +16,7 @@ import ListActivity from "components/ListActivity";
 import useFetch from "../../hook/useFetch";
 
 const content = () => {
-  const { data, isLoading, error, refetch } = useFetch("list-activity?search=user:650d741a0056971b4f027af9&fetch=-ans,-__v&pops=path:course$select:name exam image type completed");
+  const { data, isLoading, error, refetch } = useFetch({ endpoint: "list-activity?search=user:650d741a0056971b4f027af9&fetch=-ans,-__v&pops=path:course$select:name exam image type completed" });
 
   const items = [
     {
@@ -46,13 +46,13 @@ const content = () => {
     <View>
       <SafeAreaView>
         {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-          <View style={styles.container}>
-            <FlatList
-              data={data}
-              renderItem={({ item }) => <ListActivity item={item} to={`course/${item?.course?._id}`} status_course={1}/>}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
+        <View style={styles.container}>
+          <FlatList
+            data={data}
+            renderItem={({ item }) => <ListActivity item={item} to={`course/${item?.course?._id}`} status_course={1} />}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
         {/* </ScrollView> */}
       </SafeAreaView>
     </View>

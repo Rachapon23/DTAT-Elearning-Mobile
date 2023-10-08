@@ -18,7 +18,6 @@ const useFetch = (method = 'GET', endpoint, query = [], authtoken = AUTHTOKEN) =
             },
             params: { ...query },
         };
-
         setIsLoading(true);
         try {
             const res = await axios.request(options)
@@ -30,6 +29,7 @@ const useFetch = (method = 'GET', endpoint, query = [], authtoken = AUTHTOKEN) =
         }
         finally {
             setIsLoading(false)
+            return res.data
         }
     }
 
