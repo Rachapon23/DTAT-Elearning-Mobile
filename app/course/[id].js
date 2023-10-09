@@ -23,7 +23,7 @@ const content = () => {
   const { id } = useLocalSearchParams();
   const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
   if (data) {
-    console.log(data?.teacher);
+    // console.log(data?.teacher);
     // const { data2, isLoading2, error2 } = useFetch(
     //   `get-profile/user/${data?.teacher}`
     // );

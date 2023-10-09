@@ -1,40 +1,56 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { REACT_APP_API } from "@env";
-const AUTHTOKEN =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0bmFtZSI6IlJhY2hhcG9uIiwicm9sZSI6ImFkbWluIiwidXNlcl9pZCI6IjY1MGQ3NDFhMDA1Njk3MWI0ZjAyN2FmOSJ9LCJpYXQiOjE2OTY3NTc5MDAsImV4cCI6MTY5Njg0NDMwMH0.ajdAi4rAIotFIdv--jANeWBHxx6ZmLF6wk0yQ2yrSFE";
 
-const useFetch = (method = 'GET', endpoint, query = [], authtoken = AUTHTOKEN) => {
+import * as SecureStore from 'expo-secure-store';
+
+const useFetch = (options = { method: 'GET', endpoint: null, query: [], payload: null }) => {
+
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
     const [error, setError] = useState(null);
 
-    const fetchData = async (method, endpoint, query = [], authtoken = AUTHTOKEN) => {
+
+    const fetchData = async ({ method, endpoint, query = [], payload }) => {
+        const authtoken = await SecureStore.getItemAsync('token')
+        // console.log("authtoken:", authtoken)
+
         const options = {
-            method: method,
+            method,
             url: `${REACT_APP_API}/${endpoint}`,
             headers: {
                 authtoken,
             },
             params: { ...query },
+            data: payload,
         };
-        setIsLoading(true);
         try {
+            setIsLoading(true);
             const res = await axios.request(options)
             setData(res.data.data)
-        }
-        catch (err) {
-            setError(err);
-            alert('Error on fetch data');
-        }
-        finally {
             setIsLoading(false)
             return res.data
         }
+        catch (err) {
+            setError(err);
+            setIsLoading(false)
+            // alert('Error on fetch data');
+            return err?.response?.data
+        }
     }
 
+    const checkOptions = (options) => {
+        if (!options) return false
+        if (!options?.endpoint) return false
+        return true
+    }
+
+
     useEffect(() => {
-        fetchData(method, endpoint, query, authtoken);
+        const fetch = checkOptions(options)
+        if (fetch) {
+            fetchData({ ...options });
+        }
     }, [])
 
     const refetch = () => {
@@ -43,7 +59,7 @@ const useFetch = (method = 'GET', endpoint, query = [], authtoken = AUTHTOKEN) =
             console.error("refetch in useFetch must take argument before called")
             return
         }
-        fetchData(method, endpoint, query, authtoken);
+        fetchData({ method, endpoint, query, payload });
     }
 
     return { data, isLoading, error, refetch, fetchData };

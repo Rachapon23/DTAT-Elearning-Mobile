@@ -10,80 +10,51 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
 import ListActivity from "components/ListActivity";
 import useFetch from "../../hook/useFetch";
+import * as SecureStore from 'expo-secure-store';
+
+const item = [
+  {
+    _id: "64a2c36a168482b1c49c4800",
+    course: {
+      image: {
+        original_name: "course-pic1",
+        name: "file-1686314592046-712090448.jpg",
+        url: "/course/file-1686314592046-712090448.jpg"
+      },
+      _id: "64a2c36a168482b1c49c477b",
+      name: "Introduction of Docker",
+      type: true,
+      exam: "64a2c36a168482b1c49c47f3"
+    },
+    completed: false,
+    createdAt: "2023-07-03T12:47:38.221Z",
+    progress: 0,
+    result: 0,
+    score_max: null,
+    score_value: null,
+    updatedAt: "2023-10-06T20:13:02.688Z",
+    user: "64a2c369168482b1c49c4761"
+  }
+]
 
 const content = () => {
-  const { data, isLoading, error, refetch } = useFetch({ endpoint: "list-activity?search=user:650d741a0056971b4f027af9&fetch=-ans,-__v&pops=path:course$select:name exam image type completed" });
-  const items = [
-    {
-      id: 1,
-      title: "course 1",
-      detail:
-        "test course 1 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 2,
-      title: "course 2",
-      detail:
-        "test course 2 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 3,
-      title: "course 3",
-      detail:
-        "test course 3 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 4,
-      title: "course 4",
-      detail:
-        "test course 4 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 5,
-      title: "course 5",
-      detail:
-        "test course 5 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 6,
-      title: "course 6",
-      detail:
-        "test course 6 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 7,
-      title: "course 7",
-      detail:
-        "test course 7 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 8,
-      title: "course 8",
-      detail:
-        "test course 8 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 9,
-      title: "course 9",
-      detail:
-        "test course 9 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-  ];
-  // console.log("DATA: ",data)
-  // NOTE: if we use FlatList in ScrollView this error "VirtualizedLists should never be nested inside plain ScrollViews" will appear
+  const fetch = useFetch();
+  const [data, setData] = useState(null)
+
+  const getData = async () => {
+    const user = await SecureStore.getItemAsync('user_id')
+    const res = await fetch.fetchData({ endpoint: `list-activity?search=user:${user}&fetch=-ans,-__v&pops=path:course$select:name exam image type completed` })
+    setData(res.data)
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
+
   return (
     <View>
       <SafeAreaView>
