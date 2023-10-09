@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { REACT_APP_API } from "@env";
+
 import * as SecureStore from 'expo-secure-store';
 
 const useFetch = (options = { method: 'GET', endpoint: null, query: [], payload: null }) => {
+
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
     const [error, setError] = useState(null);
 
+
     const fetchData = async ({ method, endpoint, query = [], payload }) => {
         const authtoken = await SecureStore.getItemAsync('token')
         // console.log("authtoken:", authtoken)
+
         const options = {
             method,
             url: `${REACT_APP_API}/${endpoint}`,
