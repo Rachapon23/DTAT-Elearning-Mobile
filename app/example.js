@@ -15,8 +15,15 @@ import {
 } from "react-native";
 import { Link, Stack } from "expo-router";
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
+
+import YoutubeIframe from "react-native-youtube-iframe";
+import useFetch from "hook/useFetch";
+import axios from "axios";
+import { REACT_APP_API, REACT_APP_IMG } from "@env";
+import * as SecureStore from 'expo-secure-store';
+import ImagePrivate from "components/ImagePrivate";
 
 const SLIDER_WIDTH = Dimensions.get('window').width + 0
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9)
@@ -156,6 +163,61 @@ const stylesSB = StyleSheet.create({
 
 // -------------------------------------------------
 
+const Youtube = () => {
+  const [playing, setPlaying] = useState(false);
+
+  const onStateChange = useCallback((state) => {
+    if (state === "ended") {
+      setPlaying(false);
+      Alert.alert("video has finished playing!");
+    }
+  }, []);
+
+  const togglePlaying = useCallback(() => {
+    setPlaying((prev) => !prev);
+  }, []);
+
+  return (
+    <View>
+      <YoutubeIframe
+        height={300}
+        play={playing}
+        videoId={"x7X9w_GIm1s"}
+        onChangeState={onStateChange}
+      />
+      <Button title={playing ? "pause" : "play"} onPress={togglePlaying} />
+    </View>
+  );
+}
+
+// -------------------------------------------------
+
+const GetPrivateFile = () => {
+  const [data, setData] = useState(null)
+  // const fetch = useFetch()
+
+  const getFileToken = async () => {
+    const token = await SecureStore.getItemAsync('file_token')
+    setData(`${REACT_APP_IMG}/topic?file=file-1696956962579-795503552.png&token=${token}`)
+  }
+
+  // console.log(data)
+
+  useEffect(() => {
+    getFileToken()
+  }, [])
+
+  return (
+    <View>
+      <Image source={{ uri: data }} style={{ height: 200, width: 420, flex: 1 }} onError={(e) => console.log("ERROR", e.nativeEvent.error)}/>
+      <Text>{data}</Text>
+    </View>
+  )
+}
+
+
+// -------------------------------------------------
+
 const Exmaple = () => {
   const data = [
     {
@@ -223,6 +285,11 @@ const Exmaple = () => {
             inactiveDotScale={0.6}
             tappableDots={true}
           />
+
+          <Youtube />
+
+          {/* <GetPrivateFile /> */}
+          <ImagePrivate path={'topic'} file={'file-1696956962579-795503552.png'}/>
         </View>
       </ScrollView>
     </SafeAreaView>

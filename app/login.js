@@ -45,6 +45,7 @@ const content = () => {
     const data = await fetch.fetchData({ method: 'POST', endpoint: 'login', payload })
     if (!data?.error) {
       await SecureStore.setItemAsync('token', data.token)
+      await SecureStore.setItemAsync('file_token', data.file_token)
       await SecureStore.setItemAsync('firstname', data.payload.user.firstname)
       await SecureStore.setItemAsync('role', data.payload.user.role)
       await SecureStore.setItemAsync('user_id', data.payload.user.user_id)
