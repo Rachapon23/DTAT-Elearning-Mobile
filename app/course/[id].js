@@ -11,7 +11,7 @@ import {
   Dimensions,
 } from "react-native";
 import { REACT_APP_IMG } from "@env";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
 
 const WIDTH = Dimensions.get("window").width;
@@ -21,22 +21,29 @@ const DEFAULT_IMAGE =
 const content = () => {
   const [teacherProfile, setTeacherProfile] = useState();
   const { id } = useLocalSearchParams();
-  const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
-  if (data) {
-    // console.log(data?.teacher);
-    // const { data2, isLoading2, error2 } = useFetch(
-    //   `get-profile/user/${data?.teacher}`
-    // );
-    // setTeacherProfile(data2);
+  // const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
+  const [data, setCourse] = useState(null);
+  const [topics, setTopics] = useState(null);
+
+  const fetch = useFetch();
+
+  const getData = async () => {
+    const course = await fetch.fetchData({ endpoint: `get-course/${id}` });
+    setCourse(course);
+    const topics = await fetch.fetchData({ endpoint: `list-topic/course/${id}` });
+    setTopics(topics);
   }
-  //   const { dataToppic, isLoading3, error3, refetch3 } = useFetch(`get-course/${id}`);
+
+  useEffect(() => {
+    getData()
+  }, [])
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
           source={{
-            uri: data?.image?.name
-              ? REACT_APP_IMG + "/course/" + data?.image?.name
+            uri: data?.image?.url
+              ? REACT_APP_IMG + data?.image?.url
               : DEFAULT_IMAGE,
           }}
           style={styles.image}
@@ -51,7 +58,7 @@ const content = () => {
         </View>
       </View>
       <View>
-        <Text style={styles.text_3}>TOPIC :: {data?.topic}</Text>
+        <Text style={styles.text_3}>TOPIC :: {JSON.stringify(topics)}</Text>
       </View>
     </View>
   );

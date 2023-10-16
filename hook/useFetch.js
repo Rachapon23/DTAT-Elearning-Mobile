@@ -4,18 +4,18 @@ import { REACT_APP_API } from "@env";
 
 import * as SecureStore from 'expo-secure-store';
 
-const useFetch = (options = { method: 'GET', endpoint: null, query: [], payload: null }) => {
+const useFetch = (options = { method: 'GET', endpoint: null, query: [], payload: null, blob: null }) => {
 
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(null);
     const [error, setError] = useState(null);
 
 
-    const fetchData = async ({ method, endpoint, query = [], payload }) => {
+    const fetchData = async ({ method = 'GET', endpoint = null, query = [], payload = null, blob }) => {
         const authtoken = await SecureStore.getItemAsync('token')
         // console.log("authtoken:", authtoken)
-
-        const options = {
+        // console.log("blob", blob)
+        let options = {
             method,
             url: `${REACT_APP_API}/${endpoint}`,
             headers: {
@@ -24,6 +24,9 @@ const useFetch = (options = { method: 'GET', endpoint: null, query: [], payload:
             params: { ...query },
             data: payload,
         };
+
+        if (blob) options['responseType'] = "blob";
+
         try {
             setIsLoading(true);
             const res = await axios.request(options)
@@ -59,7 +62,7 @@ const useFetch = (options = { method: 'GET', endpoint: null, query: [], payload:
             console.error("refetch in useFetch must take argument before called")
             return
         }
-        fetchData({ method, endpoint, query, payload });
+        fetchData({ method, endpoint, query, payload, blob });
     }
 
     return { data, isLoading, error, refetch, fetchData };
