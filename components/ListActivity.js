@@ -40,8 +40,8 @@ const ListCourse = ({ item, to = null,status_course }) => {
             <View style={{ height: "100%", width: "50%" }}>
               <Image
                 source={{
-                  uri: item?.course?.image?.url
-                    ? REACT_APP_IMG + item?.course?.image?.url
+                  uri: item?.course?.image?.name
+                    ? REACT_APP_IMG + "/course/" + item?.course?.image?.name
                     : DEFAULT_IMAGE,
                 }}
                 style={styles.image}

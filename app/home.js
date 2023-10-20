@@ -202,17 +202,11 @@ const Home = () => {
 const content = () => {
 
   const { data, isLoading, error, refetch } = useFetch({ method: "GET", endpoint: "get-home" });
-  // const fetch = useFetch();
-  // fetch.fetchData({ method: "GET", endpoint: "get-sdsdsd" }).then((data) => {
-  //   fetch.fetchData({ method: "GET", endpoint: "get-sdsdsd" })
-  // })
-
-
   const announce = data?.announce;
   const course_public = data?.course_public;
   const course_private = data?.course_private;
   const items = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }];
-  // console.log("announce:: ",data?.course_public);
+  // console.log("announce:: ",data);
   return (
     <SafeAreaView>
       <ScrollView showsVerticalScrollIndicator={false}>
