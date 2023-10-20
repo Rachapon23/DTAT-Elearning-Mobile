@@ -93,39 +93,50 @@ const styles = StyleSheet.create({
 const Slider = ({ items }) => {
   const isCarousel = useRef(null);
   const [index, setIndex] = useState(0);
+  const router = useRouter();
+
+  const navigate = (href) => {
+    if (!href) return;
+    router.replace(href);
+  };
+
+  const handleTouchEnd = () => {
+    // enter path of course
+    navigate('/');
+  }
 
   return (
-    <Link href={""}>
-      <TouchableOpacity>
-        <Carousel
-          layout="default"
-          layoutCardOffset={9}
-          ref={isCarousel}
-          data={items}
-          renderItem={CarouselCardItem}
-          sliderWidth={SLIDER_WIDTH}
-          itemWidth={SLIDER_WIDTH}
-          // inactiveSlideShift={0}
-          onSnapToItem={(index) => setIndex(index)}
-          useScrollView={true}
-        />
-        <Pagination
-          dotsLength={items?.length}
-          activeDotIndex={index}
-          carouselRef={isCarousel}
-          dotStyle={{
-            width: 10,
-            height: 10,
-            borderRadius: 5,
-            marginHorizontal: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.92)",
-          }}
-          inactiveDotOpacity={0.4}
-          inactiveDotScale={0.6}
-          tappableDots={true}
-        />
-      </TouchableOpacity>
-    </Link>
+    <View>
+      <Carousel
+        layout="default"
+        layoutCardOffset={9}
+        ref={isCarousel}
+        data={items}
+        renderItem={CarouselCardItem}
+        sliderWidth={SLIDER_WIDTH}
+        itemWidth={SLIDER_WIDTH}
+        // inactiveSlideShift={0}
+        onSnapToItem={(index) => setIndex(index)}
+        useScrollView={true}
+        onTouchEnd={handleTouchEnd}
+      />
+      <Pagination
+        dotsLength={items?.length}
+        activeDotIndex={index}
+        carouselRef={isCarousel}
+        dotStyle={{
+          width: 10,
+          height: 10,
+          borderRadius: 5,
+          marginHorizontal: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.92)",
+        }}
+        inactiveDotOpacity={0.4}
+        inactiveDotScale={0.6}
+        tappableDots={true}
+      />
+    </View>
+
   );
 };
 

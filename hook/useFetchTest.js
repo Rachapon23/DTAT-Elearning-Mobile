@@ -1,57 +1,111 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { REACT_APP_API } from "@env";
-const AUTHTOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImZpcnN0bmFtZSI6IlJhY2hhcG9uIiwicm9sZSI6ImFkbWluIiwidXNlcl9pZCI6IjY1MGQ3NDFhMDA1Njk3MWI0ZjAyN2FmOSJ9LCJpYXQiOjE2OTY3NTc5MDAsImV4cCI6MTY5Njg0NDMwMH0.ajdAi4rAIotFIdv--jANeWBHxx6ZmLF6wk0yQ2yrSFE";
 
-const useFetch = (method, endpoint) => {
+import * as SecureStore from "expo-secure-store";
+
+const useFetch = (
+  options = {
+    method: "GET",
+    endpoint: null,
+    query: [],
+    payload: null,
+    blob: null,
+  }
+) => {
   const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(null);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    let url = `${REACT_APP_API}/${endpoint}`;
-    redirecFunc(method, url);
-  }, []);
+  const fetchData = async ({
+    method = "GET",
+    endpoint = null,
+    query = [],
+    payload = null,
+    blob,
+  }) => {
+    const authtoken = await SecureStore.getItemAsync("token");
+    // console.log("authtoken:", authtoken)
+    // console.log("blob", blob)
+    let options = {
+      method,
+      url: `${REACT_APP_API}/${endpoint}`,
+      headers: {
+        authtoken,
+      },
+      params: { ...query },
+      data: payload,
+    };
 
-  const redirecFunc = async (method, url) => {
-    console.log("method :", method);
-    console.log("url :", url);
-    if (method == "GET") {
-      await fetchDataGET(url)
-        .then((res) => {
-          setData(res.data.data);
-        })
-        .catch((err) => {
-          setError(err);
-        });
-    } else if (method == "POST") {
-      await fetchDataPOST(url)
-        .then((res) => {
-          setData(res.data.data);
-        })
-        .catch((err) => {
-          setError(err);
-        });
+    if (blob) options["responseType"] = "blob";
+
+    try {
+      setIsLoading(true);
+      // const res = await axios.request(options)
+      // setData(res.data.data)
+      if (method == "GET") {
+        console.log('GET')
+        await axios
+          .get(`${REACT_APP_API}/${endpoint}`, {
+            headers: {
+              authtoken,
+            },
+          })
+          .then((res) => {
+            setData(res?.data?.data);
+          })
+          .catch((err) => {
+            setError(err?.response?.data);
+          });
+      } else if (method == "POST") {
+        console.log('POST')
+        await axios
+          .post(`${REACT_APP_API}/${endpoint}`, {
+            headers: {
+              authtoken,
+            },
+          })
+          .then((res) => {
+            setData(res?.data?.data);
+            console.log(res?.data?.data)
+          })
+          .catch((err) => {
+            setError(err?.response?.data);
+            console.log("ERR:",err)
+          });
+      }
+      setIsLoading(false);
+      return res.data;
+    } catch (err) {
+      setError(err);
+      setIsLoading(false);
+      alert('Error on fetch data');
+      return err?.response?.data;
     }
   };
-    return {data,error};
-};
 
-// GET:
-const fetchDataGET = async (url) => {
-  return await axios.get(url, {
-    headers: {
-      AUTHTOKEN,
-    },
-  });
-};
-// POST:
-const fetchDataPOST = async (url) => {
-  return await axios.post(url, {
-    headers: {
-      AUTHTOKEN,
-    },
-  });
-};
+  const checkOptions = (options) => {
+    if (!options) return false;
+    if (!options?.endpoint) return false;
+    return true;
+  };
 
+  useEffect(() => {
+    const fetch = checkOptions(options);
+    if (fetch) {
+      fetchData({ ...options });
+    }
+  }, []);
+
+  const refetch = () => {
+    setIsLoading(true);
+    if (!endpoint) {
+      console.error("refetch in useFetch must take argument before called");
+      return;
+    }
+    fetchData({ method, endpoint, query, payload, blob });
+  };
+
+  return { data, isLoading, error, refetch, fetchData };
+};
 export default useFetch;

@@ -11,8 +11,9 @@ import {
   Dimensions,
 } from "react-native";
 import { REACT_APP_IMG } from "@env";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
+import ListTopic from "components/ListTopic";
 
 const WIDTH = Dimensions.get("window").width;
 const DEFAULT_IMAGE =
@@ -21,39 +22,65 @@ const DEFAULT_IMAGE =
 const content = () => {
   const [teacherProfile, setTeacherProfile] = useState();
   const { id } = useLocalSearchParams();
-  const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
-  if (data) {
-    // console.log(data?.teacher);
-    // const { data2, isLoading2, error2 } = useFetch(
-    //   `get-profile/user/${data?.teacher}`
-    // );
-    // setTeacherProfile(data2);
-  }
-  //   const { dataToppic, isLoading3, error3, refetch3 } = useFetch(`get-course/${id}`);
+  // const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
+  const [course, setCourse] = useState(null);
+  const [topics, setTopics] = useState(null);
+
+  const fetch = useFetch();
+
+  const getData = async () => {
+    const data = await fetch.fetchData({
+      endpoint: `get-course/${id}?pops=path:teacher$select:firstname lastname _id,path:exam$select:name`,
+    });
+    console.log(data)
+    await setCourse(data);
+    const topics = await fetch.fetchData({
+      endpoint: `list-topic/course/${id}`,
+    });
+    setTopics(topics);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+  console.log(course);
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={{
-            uri: data?.image?.name
-              ? REACT_APP_IMG + "/course/" + data?.image?.name
-              : DEFAULT_IMAGE,
-          }}
-          style={styles.image}
-        />
-        <View style={styles.body}>
-          <Text style={styles.text_1}>{data?.name}</Text>
-          <Text style={styles.text_2}>{data?.detail}</Text>
-          <Text style={styles.text_3}>
-            By {data?.teacher}
-            {/* By {teacherProfile?.firstname} {teacherProfile?.lastname} */}
-          </Text>
+    <SafeAreaView>
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Image
+              source={{
+                uri: course?.data?.image?.name
+                  ? REACT_APP_IMG + "/course/" + course?.data?.image?.name
+                  : DEFAULT_IMAGE,
+              }}
+              style={styles.image}
+            />
+            <View style={styles.body}>
+              {/* <Text style={styles.text_1}>{course?.data?.name} {JSON.stringify(course?.data?.name)}</Text> */}
+              <Text style={styles.text_1}>{course?.data?.name}</Text>
+              <Text style={styles.text_2}>{course?.data?.detail}</Text>
+              <Text style={styles.text_3}>
+                By {course?.data?.teacher?.firstname}{" "}
+                {course?.data?.teacher?.lastname}
+              </Text>
+            </View>
+          </View>
+          <View>
+            {/* <FlatList
+            style={{height:300}}
+              data={topics}
+              renderItem={({ item }) => <ListTopic item={item} />}
+              showsVerticalScrollIndicator={false}
+            /> */}
+            {topics?.map((item,index)=>(
+              <ListTopic key={index} item={item}/>
+            ))}
+          </View>
         </View>
-      </View>
-      <View>
-        <Text style={styles.text_3}>TOPIC :: {data?.topic}</Text>
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

@@ -21,7 +21,6 @@ const DEFAULT_IMAGE =
 const ListCourse = ({ item, to = null,status_course }) => {
 
   const router = useRouter();
-
   const navigate = (href) => {
     if (!href) return;
     router.push(href);
