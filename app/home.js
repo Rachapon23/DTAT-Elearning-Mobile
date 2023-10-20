@@ -201,11 +201,11 @@ const Home = () => {
 
 const content = () => {
 
-  // const { data, isLoading, error, refetch } = useFetch({ method: "GET", endpoint: "get-home" });
-  const fetch = useFetch();
-  fetch.fetchData({ method: "GET", endpoint: "get-sdsdsd" }).then((data) => {
-    fetch.fetchData({ method: "GET", endpoint: "get-sdsdsd" })
-  })
+  const { data, isLoading, error, refetch } = useFetch({ method: "GET", endpoint: "get-home" });
+  // const fetch = useFetch();
+  // fetch.fetchData({ method: "GET", endpoint: "get-sdsdsd" }).then((data) => {
+  //   fetch.fetchData({ method: "GET", endpoint: "get-sdsdsd" })
+  // })
 
 
   const announce = data?.announce;
