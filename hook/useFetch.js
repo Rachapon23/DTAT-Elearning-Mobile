@@ -38,17 +38,17 @@ const useFetch = (
     };
 
     if (blob) options["responseType"] = "blob";
-    // console.log({options});
+
     try {
       setIsLoading(true);
-      const res = await axios.request(options); // Error Axios redirec to catch
+      const res = await axios.request(options);
       setData(res.data.data);
       setIsLoading(false);
       return res.data;
     } catch (err) {
       setError(err);
       setIsLoading(false);
-      alert('Error on fetch data');
+      // alert('Error on fetch data');
       return err?.response?.data;
     }
   };

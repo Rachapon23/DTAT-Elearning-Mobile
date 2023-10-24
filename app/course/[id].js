@@ -9,41 +9,68 @@ import {
   FlatList,
   StyleSheet,
   Dimensions,
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import { REACT_APP_IMG } from "@env";
 import { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
 import ListTopic from "components/ListTopic";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 
 const WIDTH = Dimensions.get("window").width;
+const HEIGHT = Dimensions.get("window").height;
+
 const DEFAULT_IMAGE =
   "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
 const content = () => {
-  const [teacherProfile, setTeacherProfile] = useState();
   const { id } = useLocalSearchParams();
-  // const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
-  const [course, setCourse] = useState(null);
-  const [topics, setTopics] = useState(null);
+  const params = JSON.parse(`${id}`);
+
+  const [course, setCourse] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [teacherProfile, setTeacherProfile] = useState();
 
   const fetch = useFetch();
-
+  const router = useRouter();
+  const navigate = (href) => {
+    if (!href) return;
+    // router.push(href);
+    console.log(href)
+  };
   const getData = async () => {
     const data = await fetch.fetchData({
-      endpoint: `get-course/${id}?pops=path:teacher$select:firstname lastname _id,path:exam$select:name`,
+      endpoint: `get-course/${params?.course}?pops=path:teacher$select:firstname lastname _id,path:exam$select:name`,
     });
-    console.log(data)
-    await setCourse(data);
+    setCourse(data?.data);
     const topics = await fetch.fetchData({
-      endpoint: `list-topic/course/${id}`,
+      endpoint: `list-topic/course/${params?.course}`,
     });
     setTopics(topics);
+    console.log("teacherProfile:",course?.teacher?._id)
+    const teacher = await fetch.fetchData({
+      endpoint: `get-profile/user/${course?.teacher?._id}`,
+    });
+    setTeacherProfile(teacher?.data);
   };
 
   useEffect(() => {
     getData();
   }, []);
-  console.log(course);
+
+  const alertTeacher = () => {
+    console.log(teacherProfile)
+    Alert.alert('Teacher Profile',
+      `Name: ${teacherProfile?.firstname} ${teacherProfile?.lastname}\nEmail: \nTel: ${teacherProfile?.tel}`
+      , [
+        {
+          text: 'OK', onPress: () => { }
+        },
+      ]);
+  }
+  // console.log("==========", teacherProfile)
   return (
     <SafeAreaView>
       <ScrollView>
@@ -51,33 +78,53 @@ const content = () => {
           <View style={styles.header}>
             <Image
               source={{
-                uri: course?.data?.image?.name
-                  ? REACT_APP_IMG + "/course/" + course?.data?.image?.name
+                uri: course?.image?.name
+                  ? REACT_APP_IMG + "/course/" + course?.image?.name
                   : DEFAULT_IMAGE,
               }}
               style={styles.image}
             />
             <View style={styles.body}>
-              {/* <Text style={styles.text_1}>{course?.data?.name} {JSON.stringify(course?.data?.name)}</Text> */}
-              <Text style={styles.text_1}>{course?.data?.name}</Text>
-              <Text style={styles.text_2}>{course?.data?.detail}</Text>
-              <Text style={styles.text_3}>
-                By {course?.data?.teacher?.firstname}{" "}
-                {course?.data?.teacher?.lastname}
-              </Text>
+              <Text style={styles.text_1}>{course?.name}</Text>
+              <Text style={styles.text_2}>{course?.detail}</Text>
+              <TouchableOpacity onPress={alertTeacher}>
+                <Text style={styles.text_3}>
+                  By {course?.teacher?.firstname} {course?.teacher?.lastname}
+                </Text>
+              </TouchableOpacity>
+
             </View>
           </View>
-          <View>
-            {/* <FlatList
-            style={{height:300}}
-              data={topics}
-              renderItem={({ item }) => <ListTopic item={item} />}
-              showsVerticalScrollIndicator={false}
-            /> */}
-            {topics?.map((item,index)=>(
-              <ListTopic key={index} item={item}/>
-            ))}
-          </View>
+          {course?.enabled ? (
+            <View>
+              {course?.exam?._id ? (
+                <View style={styles.exam}>
+                  <Text style={[styles.text_2, { marginBottom: 5, textAlign: "center" }]}>
+                    Exam: {course?.exam?.name}
+                  </Text>
+                  <TouchableOpacity
+                    style={[styles.toexam, { width: WIDTH - 40 }]}
+                    onPress={() => {
+                      navigate(`exam/{"exam":"${params?.exam}","activity":"${params?.activity}","course":"${params?.course}"}`);
+                    }}
+                  >
+                    <Text style={styles.start}>Start</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <></>
+              )}
+              {topics?.length >= 0 && topics?.map((item, index) => (
+                <ListTopic key={index} item={item} />
+              ))}
+            </View>
+          ) : (
+            <View style={styles.course_disabled}>
+              <Ionicons name={"warning-outline"} size={35} color={"gray"} />
+
+              <Text>Course Not Avaliable</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -99,6 +146,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(159, 187, 246, 0.2)",
     paddingBottom: 20,
     borderRadius: 5,
+    marginBottom: 10,
   },
   body: {
     padding: 10,
@@ -125,4 +173,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 10,
   },
+  course_disabled: {
+    height: HEIGHT - 500,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  exam: {
+    backgroundColor: "rgba(159, 187, 246, 0.2)",
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+    textAlign: "center",
+  },
+  toexam: {
+    backgroundColor: "#0275d8",
+    padding: 5,
+    borderRadius: 5,
+  },
+  start: { color: "#fff", textAlign: "center" },
 });

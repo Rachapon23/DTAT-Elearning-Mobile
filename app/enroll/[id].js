@@ -1,17 +1,235 @@
 import { useLocalSearchParams } from "expo-router";
-import { SafeAreaView, ScrollView, Text, View } from "react-native";
+import useFetch from "../../hook/useFetch";
+import {
+    SafeAreaView,
+    ScrollView,
+    Text,
+    View,
+    Image,
+    FlatList,
+    StyleSheet,
+    Dimensions,
+    TouchableOpacity,
+    Alert
+} from "react-native";
+import { REACT_APP_IMG } from "@env";
+import { useEffect, useState } from "react";
+import Theme1 from "theme/Theme1";
+import ListTopic from "components/ListTopic";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
-const Enroll = () => {
-    const { id } = useLocalSearchParams()
+const WIDTH = Dimensions.get("window").width;
+const HEIGHT = Dimensions.get("window").height;
+
+const DEFAULT_IMAGE =
+    "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
+
+// const { id } = useLocalSearchParams()
+
+const content = () => {
+    const { id } = useLocalSearchParams();
+
+    const [course, setCourse] = useState([]);
+    const [conditionData, setConditionData] = useState([]);
+    const [courseResult, setCourseResult] = useState(false)
+    const [registered, setRegistered] = useState(false)
+    const [passedCondition, setPassedCondition] = useState(false)
+    const [pageChange, setPageChange] = useState(false)
+
+    const fetch = useFetch();
+    const router = useRouter();
+
+    const isPassCondition = async (conditionData) => {
+        // check registered
+        await checkRegistered()
+        console.log("conditionData: ", conditionData)
+        if (
+            Array.isArray(conditionData) &&
+            (
+                conditionData.length === 0 ||
+                course?.type === true
+            )
+        ) return setPassedCondition(true)
+
+        // check plant
+        let result = false
+        for (let i = 0; i < conditionData.length; i++) {
+            console.log("condition In Loop: ", conditionData[i], " plant: ", conditionData[i].plant.name, plant)
+            if (conditionData[i].plant.name === plant) {
+                console.log("plan:t: ", plant)
+                result = true
+                break
+            }
+
+            if (conditionData[i].current + 1 > conditionData[i].maximum) {
+                result = false
+                break
+            }
+        }
+
+        // console.log("in plant: ", result)
+        setPassedCondition(result)
+        // setPageChange(true)
+    }
+
+    const checkRegistered = async () => {
+        const user = await SecureStore.getItemAsync("user_id");
+        const res = await fetch.fetchData({
+            endpoint: `get-activity/?search=user:${user},course:${id}&fetch=_id,result`,
+        });
+        // console.log("RES:",res)
+        if (res?.data) {
+            setCourseResult(res?.data?.result)
+            setRegistered(true)
+        }
+    }
+
+    const getData = async () => {
+        const data = await fetch.fetchData({
+            endpoint: `get-course/${id}?fetch=name,detail,image,condition,teacher,type&pops=path:condition$populate:plant$select:plant maximum current,path:teacher$select:firstname lastname -_id`,
+        });
+        setCourse(data?.data);
+        const condition = await fetch.fetchData({
+            endpoint: `list-condition/course/${id}`,
+        });
+        setConditionData(data?.data);
+        isPassCondition(data?.data);
+    };
+
+    useEffect(() => {
+        getData();
+        return () => {
+            setPageChange(false);
+        }
+    }, [pageChange]);
+
+    const handleOpenCourse = () => {
+        router.push(`course/{"course":"${id}"}`);
+    }
+
+    const handleAddCourse = async () => {
+        console.log("handleAddCourse")
+        if (!isPassCondition(conditionData)) {
+            // alert user or something
+            console.log("????")
+            return
+        }
+        const user = await SecureStore.getItemAsync("user_id");
+        const createActivity = await fetch.fetchData({ method: "POST", endpoint: "create-activity", payload: { user: `${user}`, course: `${id}` } });
+        if (createActivity?.error) {
+            alert(createActivity?.error)
+        }
+        // console.log(createActivity?.data?._id)
+        if (createActivity?.data?._id) {
+            setPageChange(true);
+            // getData(); not working
+            // router.push(`enroll/${id}}`); not working
+        }
+    }
+
     return (
         <SafeAreaView>
             <ScrollView>
-                <View>
-                    <Text>Enroll id: {id}</Text>
+                <View style={styles.container}>
+                    <View style={styles.header}>
+                        <Image
+                            source={{
+                                uri: course?.image?.name
+                                    ? REACT_APP_IMG + "/course/" + course?.image?.name
+                                    : DEFAULT_IMAGE,
+                            }}
+                            style={styles.image}
+                        />
+                        <View style={styles.body}>
+                            <Text style={styles.text_1}>{course?.name}</Text>
+                            <Text style={styles.text_2}>{course?.detail}</Text>
+                            <View style={styles.badge}>
+                                <Text >
+                                    {course?.type ? "Public" : "Private"} Course
+                                </Text>
+                            </View>
+                            <Text style={styles.text_3}>
+                                By {course?.teacher?.firstname} {course?.teacher?.lastname}
+                            </Text>
+                        </View>
+                    </View>
+                    <View style={styles.registered}>
+                        <TouchableOpacity style={styles.registered_btn}
+                            onPress={() => registered ? handleOpenCourse() : handleAddCourse()}
+                        >
+                            <Text style={styles.registered_Text}>
+                                {registered ? "Go to Course" : "Add Course"}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
-    )
+    );
+};
+
+const Enroll = () => {
+    return <Theme1 content={content()} />;
 }
 
 export default Enroll;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 10,
+    },
+    header: {
+        backgroundColor: "rgba(159, 187, 246, 0.2)",
+        paddingBottom: 20,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    body: {
+        padding: 10,
+    },
+    image: {
+        height: (WIDTH - 20) / 1.7,
+        width: WIDTH - 20,
+        borderTopRightRadius: 5,
+        borderTopLeftRadius: 5,
+    },
+    text_1: {
+        color: "#222",
+        fontSize: 18,
+        fontWeight: "500",
+    },
+    text_2: {
+        color: "#222",
+        fontWeight: "400",
+        fontSize: 14,
+    },
+    text_3: {
+        color: "#0275d8",
+        fontWeight: "400",
+        fontSize: 14,
+        marginTop: 10,
+    },
+    badge: {
+        backgroundColor: "#fff",
+        padding: 5,
+        width: 120,
+        borderRadius: 3,
+        marginTop: 10,
+    },
+    registered: {
+        backgroundColor: "rgba(159, 187, 246, 0.2)",
+        marginBottom: 10,
+        padding: 10,
+        borderRadius: 5,
+        textAlign: "center",
+    },
+    registered_btn: {
+        backgroundColor: "#0275d8",
+        padding: 5,
+        borderRadius: 5,
+    },
+    registered_Text: { color: "#fff", textAlign: "center" },
+});

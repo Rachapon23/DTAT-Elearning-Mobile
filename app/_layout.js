@@ -54,6 +54,12 @@ const Layout = () => {
         }}
       />
       <Stack.Screen
+        name="exam/[id]"
+        options={{
+          headerTitle: "exam",
+        }}
+      />
+      <Stack.Screen
         name="course/[id]"
         options={{
           headerTitle: "Course",
