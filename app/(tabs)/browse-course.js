@@ -15,8 +15,9 @@ import React from "react";
 import ListCourse from "components/ListCourse";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Theme1 from "theme/Theme1";
-import useFetch from "../../hook/useFetchBrow";
+import useFetch from "../../hook/useFetch";
 import { useRef, useState, useEffect } from "react";
+import { useRouter } from "expo-router";
 
 const WIDTH = Dimensions.get("window").width;
 const SearchBar = ({
@@ -100,63 +101,55 @@ const SearchBar = ({
 };
 
 const content = () => {
-  const { data1, setData1, data2, setData2, isLoading, error, refetch } = useFetch(
-    
-  );
+
+  const [course, setCourse] = useState([]);
+  const [course2, setCourse2] = useState([]);
 
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
 
-  const items = [
-    {
-      id: 1,
-      title: "course 1",
-      detail:
-        "test course 1 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 2,
-      title: "course 2",
-      detail:
-        "test course 2 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 3,
-      title: "course 3",
-      detail:
-        "test course 3 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-  ];
-  // to={`/enroll/${item.id}`}
-  // NOTE: if we use FlatList in ScrollView this error "VirtualizedLists should never be nested inside plain ScrollViews" will appear
+  const fetch = useFetch();
+  const router = useRouter();
+
+  const navigate = (href) => {
+    if (!href) return;
+    // router.push(href);
+    console.log(href)
+  };
+
+  const getData = async () => {
+    const res = await fetch.fetchData({
+      endpoint: `list-course?selects=name,detail,image,type`,
+    });
+    setCourse(res?.data);
+    setCourse2(res?.data);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <View>
       <SafeAreaView>
-        <View style={styles.container}>
-          <SearchBar
-            searchPhrase={searchPhrase}
-            setSearchPhrase={setSearchPhrase}
-            clicked={clicked}
-            setClicked={setClicked}
-            data1={data1}
-            setData1={setData1}
-            data2={data2}
-            setData2={setData2}
-          />
-          <View style={{ marginBottom: 60 }}>
-            <FlatList
-              data={data2}
-              renderItem={({ item }) => (
-                <ListCourse item={item} to={`/enroll/${item?._id}`} />
-              )}
-              showsVerticalScrollIndicator={false}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.container}>
+            <SearchBar
+              searchPhrase={searchPhrase}
+              setSearchPhrase={setSearchPhrase}
+              clicked={clicked}
+              setClicked={setClicked}
+              data1={course}
+              setData1={setCourse}
+              data2={course2}
+              setData2={setCourse2}
             />
+            {course2.length >= 0 && course2?.map((item, index) => (
+              <ListCourse key={index} item={item} to={`enroll/${item?._id}`}/>
+            ))}
           </View>
-        </View>
-      </SafeAreaView>
+        </ScrollView>
+        </SafeAreaView>
     </View>
   );
 };

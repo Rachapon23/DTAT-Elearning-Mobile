@@ -39,8 +39,10 @@ const content = () => {
     console.log("password: ", password);
 
     const payload = {
-      employee: username,
-      password: password,
+      employee: "3",
+      password: "3",
+      // employee: username,
+      // password: password,
     };
 
     const data = await fetch.fetchData({
