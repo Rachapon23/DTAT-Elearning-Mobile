@@ -14,73 +14,60 @@ import React, { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
 import ListActivity from "components/ListActivity";
 import useFetch from "../../hook/useFetch";
-import * as SecureStore from 'expo-secure-store';
+import Ionicons from "react-native-vector-icons/Ionicons";
+import * as SecureStore from "expo-secure-store";
 
-const item = [
-  {
-    _id: "64a2c36a168482b1c49c4800",
-    course: {
-      image: {
-        original_name: "course-pic1",
-        name: "file-1686314592046-712090448.jpg",
-        url: "/course/file-1686314592046-712090448.jpg"
-      },
-      _id: "64a2c36a168482b1c49c477b",
-      name: "Introduction of Docker",
-      type: true,
-      exam: "64a2c36a168482b1c49c47f3"
-    },
-    completed: false,
-    createdAt: "2023-07-03T12:47:38.221Z",
-    progress: 0,
-    result: 0,
-    score_max: null,
-    score_value: null,
-    updatedAt: "2023-10-06T20:13:02.688Z",
-    user: "64a2c369168482b1c49c4761"
-  }
-]
-
+const HEIGHT = Dimensions.get("window").height;
 const content = () => {
   const fetch = useFetch();
-  const [data, setData] = useState(null)
+  const [activity, setActivity] = useState([]);
 
   const getData = async () => {
-    const user = await SecureStore.getItemAsync('user_id')
-    const res = await fetch.fetchData({ endpoint: `list-activity?search=user:${user}&fetch=-ans,-__v&pops=path:course$select:name exam image type completed` })
-    setData(res.data)
-  }
+    const user = await SecureStore.getItemAsync("user_id");
+    const res = await fetch.fetchData({
+      endpoint: `list-activity?search=user:${user}&fetch=-ans,-__v&pops=path:course$select:name exam image type completed`,
+    });
+    // console.log(res?.data)
+    setActivity(res?.data);
+  };
 
   useEffect(() => {
-    getData()
-  }, [])
+    getData();
+  }, []);
 
   return (
     <View>
       <SafeAreaView>
-        {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-        <View style={styles.container}>
-          <FlatList
-            data={data}
-            renderItem={({ item }) => <ListActivity item={item} to={`course/${item?.course?._id}`} status_course={0} />}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
-        {/* </ScrollView> */}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.container}>
+            {activity.length <= 0 ? (
+              <View style={styles.data_empty}>
+                <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
+                <Text>no data</Text>
+              </View>
+            ) : (
+              <View>
+                {activity?.map((item, index) => {
+                  if(item?.result === 0){
+                    return (
+                      <ListActivity
+                        key={index}
+                        item={item}
+                        course={`${item?.course?._id}`}
+                        exam={`${item?.course?.exam}`}
+                        activity={`${item?._id}`}
+                      />
+                    )
+                  }
+                })}
+              </View>
+            )}
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
 };
-
-// const ScreenHeaderButton = ({ text, to }) => {
-//     return (
-//         <Link href={to} asChild >
-//             <TouchableOpacity>
-//                 <Text>{text}</Text>
-//             </TouchableOpacity>
-//         </Link>
-//     )
-// }
 
 const Learning = () => {
   return <Theme1 content={content()} />;
@@ -90,4 +77,9 @@ export default Learning;
 
 const styles = StyleSheet.create({
   container: { padding: 10, marginTop: 20, alignItems: "center" },
+  data_empty: {
+    height: HEIGHT - 200,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

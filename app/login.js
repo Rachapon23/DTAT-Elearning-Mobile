@@ -13,9 +13,9 @@ import {
 import { Stack, Link } from "expo-router";
 import Theme1 from "../theme/Theme1";
 import React, { useState } from "react";
-import { router } from 'expo-router';
+import { router } from "expo-router";
 
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 import useFetch from "hook/useFetch";
 
 const ScreenHeaderButton = ({ text, to }) => {
@@ -29,30 +29,37 @@ const ScreenHeaderButton = ({ text, to }) => {
 };
 
 const content = () => {
+  // router.replace("/homein");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const fetch = useFetch()
+  const fetch = useFetch();
 
   const handleLogIn = async () => {
     console.log("username: ", username);
     console.log("password: ", password);
 
     const payload = {
-      employee: username,
-      password,
-    }
+      employee: "3",
+      password: "3",
+      // employee: username,
+      // password: password,
+    };
 
-    const data = await fetch.fetchData({ method: 'POST', endpoint: 'login', payload })
+    const data = await fetch.fetchData({
+      method: "POST",
+      endpoint: "login",
+      payload,
+    });
     if (!data?.error) {
-      await SecureStore.setItemAsync('token', data.token)
-      await SecureStore.setItemAsync('file_token', data.file_token)
-      await SecureStore.setItemAsync('firstname', data.payload.user.firstname)
-      await SecureStore.setItemAsync('role', data.payload.user.role)
-      await SecureStore.setItemAsync('user_id', data.payload.user.user_id)
-      router.replace('/homein');
-    }
-    else {
-      alert(data?.error)
+      console.log("data=>", JSON.stringify(data?.token))
+      await SecureStore.setItemAsync("token", data?.token);
+      await SecureStore.setItemAsync("file_token", data?.file_token);
+      await SecureStore.setItemAsync("firstname", data?.payload?.user.firstname);
+      await SecureStore.setItemAsync("role", data?.payload?.user?.role);
+      await SecureStore.setItemAsync("user_id", data?.payload?.user?.user_id);
+      router.replace("/homein");
+    } else {
+      alert(data?.error);
     }
   };
 

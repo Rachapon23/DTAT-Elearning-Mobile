@@ -10,64 +10,72 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
 import ListActivity from "components/ListActivity";
 import useFetch from "../../hook/useFetch";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import * as SecureStore from "expo-secure-store";
 
+const HEIGHT = Dimensions.get("window").height;
 const content = () => {
-  const { data, isLoading, error, refetch } = useFetch({ endpoint: "list-activity?search=user:650d741a0056971b4f027af9&fetch=-ans,-__v&pops=path:course$select:name exam image type completed" });
+  const fetch = useFetch();
+  const [activity, setActivity] = useState([]);
+  const [nodata, setNodata] = useState([]);
 
-  const items = [
-    {
-      id: 1,
-      title: "course 1",
-      detail:
-        "test course 1 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 2,
-      title: "course 2",
-      detail:
-        "test course 2 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-    {
-      id: 3,
-      title: "course 3",
-      detail:
-        "test course 3 is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard",
-      src: "../../../public/4259647.jpg",
-    },
-  ];
-  // NOTE: if we use FlatList in ScrollView this error "VirtualizedLists should never be nested inside plain ScrollViews" will appear
+  const getData = async () => {
+    const user = await SecureStore.getItemAsync("user_id");
+    const res = await fetch.fetchData({
+      endpoint: `list-activity?search=user:${user}&fetch=-ans,-__v&pops=path:course$select:name exam image type completed`,
+    });
+    setActivity(res?.data);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const istrue = (currentValue) => currentValue === true;
+
   return (
     <View>
       <SafeAreaView>
-        {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-        <View style={styles.container}>
-          <FlatList
-            data={data}
-            renderItem={({ item }) => <ListActivity item={item} to={`course/${item?.course?._id}`} status_course={1} />}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
-        {/* </ScrollView> */}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.container}>
+            {activity.length <= 0 ? (
+              <View style={styles.data_empty}>
+                <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
+                <Text>no data</Text>
+              </View>
+            ) : (
+              <View>
+                {activity?.map((item, index) => {
+                  if (item?.result !== 0) {
+                    nodata.push(true)
+                    return (
+                      <ListActivity
+                        key={index}
+                        item={item}
+                        course={`${item?.course?._id}`}
+                        exam={`${item?.course?.exam}`}
+                        activity={`${item?._id}`}
+                      />
+                    )
+                  } else { nodata.push(false) }
+                })}
+                {nodata.every(istrue) ? <></> : <View style={styles.data_empty}>
+                  <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
+                  <Text>no data</Text>
+                </View>}
+              </View>
+            )}
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
 };
 
-// const ScreenHeaderButton = ({ text, to }) => {
-//     return (
-//         <Link href={to} asChild >
-//             <TouchableOpacity>
-//                 <Text>{text}</Text>
-//             </TouchableOpacity>
-//         </Link>
-//     )
-// }
 
 const History = () => {
   return <Theme1 content={content()} />;
@@ -77,4 +85,9 @@ export default History;
 
 const styles = StyleSheet.create({
   container: { padding: 10, marginTop: 20, alignItems: "center" },
+  data_empty: {
+    height: HEIGHT - 200,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
