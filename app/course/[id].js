@@ -27,18 +27,11 @@ const DEFAULT_IMAGE =
 
 const content = () => {
   const { id } = useLocalSearchParams();
-<<<<<<< HEAD
-  // const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
-  const [data, setCourse] = useState(null);
-  const [topics, setTopics] = useState(null);
-  const [exam, setExam] = useState(null);
-=======
   const params = JSON.parse(`${id}`);
 
   const [course, setCourse] = useState([]);
   const [topics, setTopics] = useState([]);
   const [teacherProfile, setTeacherProfile] = useState();
->>>>>>> c3eddbd3bf9cf5274d6c155ba134248e7e6c5350
 
   const fetch = useFetch();
   const router = useRouter();
@@ -56,16 +49,6 @@ const content = () => {
       endpoint: `list-topic/course/${params?.course}`,
     });
     setTopics(topics);
-<<<<<<< HEAD
-    const exnam = await fetch.fetchData({ endpoint: `get-course/${id}?pops=path:teacher$select:firstname lastname _id,path:exam$select:name` })
-    setExam(exnam);
-  }
-
-  useEffect(() => {
-    getData()
-    console.log(exam)
-  }, [])
-=======
     console.log("teacherProfile:",course?.teacher?._id)
     const teacher = await fetch.fetchData({
       endpoint: `get-profile/user/${course?.teacher?._id}`,
@@ -88,7 +71,6 @@ const content = () => {
       ]);
   }
   // console.log("==========", teacherProfile)
->>>>>>> c3eddbd3bf9cf5274d6c155ba134248e7e6c5350
   return (
     <SafeAreaView>
       <ScrollView>
@@ -144,16 +126,8 @@ const content = () => {
             </View>
           )}
         </View>
-<<<<<<< HEAD
-      </View>
-      <View>
-        <Text style={styles.text_3}>TOPIC :: {JSON.stringify(exam)}</Text>
-      </View>
-    </View>
-=======
       </ScrollView>
     </SafeAreaView>
->>>>>>> c3eddbd3bf9cf5274d6c155ba134248e7e6c5350
   );
 };
 
