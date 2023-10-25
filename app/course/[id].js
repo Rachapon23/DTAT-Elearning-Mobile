@@ -24,6 +24,7 @@ const content = () => {
   // const { data, isLoading, error, refetch } = useFetch({ endpoint: `get-course/${id}` });
   const [data, setCourse] = useState(null);
   const [topics, setTopics] = useState(null);
+  const [exam, setExam] = useState(null);
 
   const fetch = useFetch();
 
@@ -32,10 +33,13 @@ const content = () => {
     setCourse(course);
     const topics = await fetch.fetchData({ endpoint: `list-topic/course/${id}` });
     setTopics(topics);
+    const exnam = await fetch.fetchData({ endpoint: `get-course/${id}?pops=path:teacher$select:firstname lastname _id,path:exam$select:name` })
+    setExam(exnam);
   }
 
   useEffect(() => {
     getData()
+    console.log(exam)
   }, [])
   return (
     <View style={styles.container}>
@@ -58,7 +62,7 @@ const content = () => {
         </View>
       </View>
       <View>
-        <Text style={styles.text_3}>TOPIC :: {JSON.stringify(topics)}</Text>
+        <Text style={styles.text_3}>TOPIC :: {JSON.stringify(exam)}</Text>
       </View>
     </View>
   );
