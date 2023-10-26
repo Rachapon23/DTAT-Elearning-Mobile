@@ -10,7 +10,9 @@ import {
     StyleSheet,
     Dimensions,
     TouchableOpacity,
-    Alert
+    Alert,
+    ProgressBarAndroid,
+    ProgressViewIOS,
 } from "react-native";
 import { REACT_APP_IMG } from "@env";
 import { useEffect, useState } from "react";
@@ -19,6 +21,7 @@ import ListTopic from "components/ListTopic";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { Calendar, LocaleConfig } from "react-native-calendars";
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
@@ -37,6 +40,9 @@ const content = () => {
     const [registered, setRegistered] = useState(false)
     const [passedCondition, setPassedCondition] = useState(false)
     const [pageChange, setPageChange] = useState(false)
+    const [even, setEven] = useState([]);
+    const [month, setMonth] = useState("");
+    const [evenRender, setEvenRender] = useState({});
 
     const fetch = useFetch();
     const router = useRouter();
@@ -44,7 +50,7 @@ const content = () => {
     const isPassCondition = async (conditionData) => {
         // check registered
         await checkRegistered()
-        console.log("conditionData: ", conditionData)
+        // console.log("conditionData: ", conditionData)
         if (
             Array.isArray(conditionData) &&
             (
@@ -96,6 +102,39 @@ const content = () => {
         });
         setConditionData(data?.data);
         isPassCondition(data?.data);
+        getCalendar()
+    };
+
+    var getDaysArray = function (start, end) {
+        for (var arr = [], dt = new Date(start); dt < new Date(end); dt.setDate(dt.getDate() + 1)) {
+            let date_new = dt
+            let day = date_new.getDate() < 10 ? "0" + date_new.getDate() : date_new.getDate();
+            let month = Number(date_new.getMonth()) + 1 < 10 ? "0" + String(Number(date_new.getMonth())+1) : Number(date_new.getMonth())+1;
+            let year = date_new.getFullYear();
+            let format4 = year + "-" + month + "-" + day;
+            console.log("AAAA : ",format4)
+            arr.push(format4);
+        }
+        return arr;
+    };
+
+    const getCalendar = async () => {
+        let data = await fetch.fetchData({
+            endpoint: `get-calendar/course/${id}`,
+        });
+        if (!data?.start) return
+        setEven(data)
+        setMonth(() => data.start.substring(0,10))
+        var daylist = getDaysArray(new Date(data?.start), new Date(data?.end));
+        console.log(daylist)
+        let obj = {}
+        for (let i = 0; i < daylist.length; i++) {
+            obj[`${daylist[i]}`] = {
+                startingDay: true,
+                color: data.color,
+            }
+        }
+        setEvenRender(() => obj)
     };
 
     useEffect(() => {
@@ -121,14 +160,12 @@ const content = () => {
         if (createActivity?.error) {
             alert(createActivity?.error)
         }
-        // console.log(createActivity?.data?._id)
         if (createActivity?.data?._id) {
             setPageChange(true);
-            // getData(); not working
-            // router.push(`enroll/${id}}`); not working
         }
     }
 
+      
     return (
         <SafeAreaView>
             <ScrollView>
@@ -155,7 +192,7 @@ const content = () => {
                             </Text>
                         </View>
                     </View>
-                    <View style={styles.registered}>
+                    <View style={styles.box}>
                         <TouchableOpacity style={styles.registered_btn}
                             onPress={() => registered ? handleOpenCourse() : handleAddCourse()}
                         >
@@ -164,6 +201,36 @@ const content = () => {
                             </Text>
                         </TouchableOpacity>
                     </View>
+                    {course?.condition?.length > 0 && course?.condition?.map((item, index) => {
+                        let persen = item?.current == 0 ? 0 : item?.maximum / item?.current
+                        return (
+                            <View key={index} style={styles.box}>
+                                <Text>Plant: {item.plant.name}</Text>
+                                <Text>Amount: {item.current} / {item.maximum}</Text>
+                                {true ? <View>
+                                    <ProgressBarAndroid
+                                        styleAttr="Horizontal"
+                                        indeterminate={false}
+                                        progress={persen}
+                                    />
+                                </View> : <View>
+                                    <ProgressViewIOS
+                                        style={styles.progress}
+                                        progressTintColor=""
+                                        progress={persen}
+                                    />
+                                </View>}
+                            </View>
+                        )
+                    })}
+                    {even && month? <View>
+                        <Calendar
+                            current={month}
+                            markingType={"period"}
+                            markedDates={evenRender}
+                            style={[styles.calendar, { width: WIDTH - 20 }]}
+                        />
+                    </View> : <></>}
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -219,7 +286,7 @@ const styles = StyleSheet.create({
         borderRadius: 3,
         marginTop: 10,
     },
-    registered: {
+    box: {
         backgroundColor: "rgba(159, 187, 246, 0.2)",
         marginBottom: 10,
         padding: 10,
@@ -232,4 +299,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     registered_Text: { color: "#fff", textAlign: "center" },
+    calendar: {
+        borderRadius: 5,
+        backgroundColor: "rgba(159, 187, 246, 0.2)",
+        height: 320,
+        marginBottom: 20,
+    },
 });
