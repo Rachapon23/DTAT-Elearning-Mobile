@@ -30,8 +30,8 @@ const ScreenHeaderButton = ({ text, to }) => {
 
 const content = () => {
   // router.replace("/homein");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("6100319");
+  const [password, setPassword] = useState("123456");
   const fetch = useFetch();
 
   const handleLogIn = async () => {
@@ -39,10 +39,10 @@ const content = () => {
     console.log("password: ", password);
 
     const payload = {
-      employee: "3",
-      password: "3",
-      // employee: username,
-      // password: password,
+      // employee: "3",
+      // password: "3",
+      employee: username,
+      password: password,
     };
 
     const data = await fetch.fetchData({

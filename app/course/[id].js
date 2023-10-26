@@ -37,8 +37,8 @@ const content = () => {
   const router = useRouter();
   const navigate = (href) => {
     if (!href) return;
-    // router.push(href);
-    console.log(href)
+    router.push(href);
+    // console.log(href)
   };
   const getData = async () => {
     const data = await fetch.fetchData({
@@ -49,7 +49,7 @@ const content = () => {
       endpoint: `list-topic/course/${params?.course}`,
     });
     setTopics(topics);
-    console.log("teacherProfile:",course?.teacher?._id)
+    console.log("teacherProfile:", course?.teacher?._id)
     const teacher = await fetch.fetchData({
       endpoint: `get-profile/user/${course?.teacher?._id}`,
     });
@@ -64,13 +64,14 @@ const content = () => {
     console.log(teacherProfile)
     Alert.alert('Teacher Profile',
       `Name: ${teacherProfile?.firstname} ${teacherProfile?.lastname}\nEmail: \nTel: ${teacherProfile?.tel}`
-      , [
+      ,
+      [
         {
           text: 'OK', onPress: () => { }
         },
       ]);
   }
-  // console.log("==========", teacherProfile)
+
   return (
     <SafeAreaView>
       <ScrollView>
