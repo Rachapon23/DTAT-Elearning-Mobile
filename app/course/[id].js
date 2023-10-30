@@ -115,9 +115,17 @@ const content = () => {
               ) : (
                 <></>
               )}
-              {topics?.length >= 0 && topics?.map((item, index) => (
-                <ListTopic key={index} item={item} />
-              ))}
+              {topics?.length > 0 ? <>
+                {
+                  topics?.map((item, index) => (
+                    <ListTopic key={index} item={item} />
+                  ))
+                }
+              </> : <View style={styles.course_disabled}>
+                <Ionicons name={"warning-outline"} size={35} color={"gray"} />
+
+                <Text>no content</Text>
+              </View>}
             </View>
           ) : (
             <View style={styles.course_disabled}>
