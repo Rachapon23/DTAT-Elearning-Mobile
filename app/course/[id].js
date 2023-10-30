@@ -49,7 +49,7 @@ const content = () => {
       endpoint: `list-topic/course/${params?.course}`,
     });
     setTopics(topics);
-    console.log("teacherProfile:",course?.teacher?._id)
+    console.log("teacherProfile:", course?.teacher?._id)
     const teacher = await fetch.fetchData({
       endpoint: `get-profile/user/${course?.teacher?._id}`,
     });
@@ -114,9 +114,17 @@ const content = () => {
               ) : (
                 <></>
               )}
-              {topics?.length >= 0 && topics?.map((item, index) => (
-                <ListTopic key={index} item={item} />
-              ))}
+              {topics?.length > 0 ? <>
+                {
+                  topics?.map((item, index) => (
+                    <ListTopic key={index} item={item} />
+                  ))
+                }
+              </> : <View style={styles.course_disabled}>
+                <Ionicons name={"warning-outline"} size={35} color={"gray"} />
+
+                <Text>no content</Text>
+              </View>}
             </View>
           ) : (
             <View style={styles.course_disabled}>

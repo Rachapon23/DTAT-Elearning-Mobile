@@ -109,10 +109,10 @@ const content = () => {
         for (var arr = [], dt = new Date(start); dt < new Date(end); dt.setDate(dt.getDate() + 1)) {
             let date_new = dt
             let day = date_new.getDate() < 10 ? "0" + date_new.getDate() : date_new.getDate();
-            let month = Number(date_new.getMonth()) + 1 < 10 ? "0" + String(Number(date_new.getMonth())+1) : Number(date_new.getMonth())+1;
+            let month = Number(date_new.getMonth()) + 1 < 10 ? "0" + String(Number(date_new.getMonth()) + 1) : Number(date_new.getMonth()) + 1;
             let year = date_new.getFullYear();
             let format4 = year + "-" + month + "-" + day;
-            console.log("AAAA : ",format4)
+            // console.log("AAAA : ",format4)
             arr.push(format4);
         }
         return arr;
@@ -124,14 +124,26 @@ const content = () => {
         });
         if (!data?.start) return
         setEven(data)
-        setMonth(() => data.start.substring(0,10))
+        setMonth(() => data.start.substring(0, 10))
         var daylist = getDaysArray(new Date(data?.start), new Date(data?.end));
-        console.log(daylist)
+        // console.log(daylist)
         let obj = {}
         for (let i = 0; i < daylist.length; i++) {
-            obj[`${daylist[i]}`] = {
-                startingDay: true,
-                color: data.color,
+            if (i == 0) {
+                obj[`${daylist[i]}`] = {
+                    startingDay: true,
+                    color: data.color,
+                }
+            } else if (i == daylist.length -1 ) {
+                obj[`${daylist[i]}`] = {
+                    endingDay: true,
+                    color: data.color,
+                }
+            } else {
+                obj[`${daylist[i]}`] = {
+                    // marked: true,
+                    color: data.color,
+                }
             }
         }
         setEvenRender(() => obj)
@@ -165,7 +177,7 @@ const content = () => {
         }
     }
 
-      
+
     return (
         <SafeAreaView>
             <ScrollView>
@@ -202,7 +214,7 @@ const content = () => {
                         </TouchableOpacity>
                     </View>
                     {course?.condition?.length > 0 && course?.condition?.map((item, index) => {
-                        let persen = item?.current == 0 ? 0 : item?.maximum / item?.current
+                        let persen = item?.current == 0 ? 0 : item?.current / item?.maximum 
                         return (
                             <View key={index} style={styles.box}>
                                 <Text>Plant: {item.plant.name}</Text>
@@ -213,6 +225,7 @@ const content = () => {
                                         indeterminate={false}
                                         progress={persen}
                                     />
+                                
                                 </View> : <View>
                                     <ProgressViewIOS
                                         style={styles.progress}
@@ -223,7 +236,7 @@ const content = () => {
                             </View>
                         )
                     })}
-                    {even && month? <View>
+                    {even && month ? <View>
                         <Calendar
                             current={month}
                             markingType={"period"}
