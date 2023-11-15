@@ -97,6 +97,7 @@ const content = () => {
     }
 
     const getData = async () => {
+        // console.log(id)
         const data = await fetch.fetchData({
             endpoint: `get-course/${id}?fetch=name,detail,image,condition,teacher,type&pops=path:condition$populate:plant$select:plant maximum current,path:teacher$select:firstname lastname -_id`,
         });
