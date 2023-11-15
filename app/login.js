@@ -29,19 +29,21 @@ const ScreenHeaderButton = ({ text, to }) => {
 };
 
 const content = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+
+  // router.replace("/homein");
+  const [username, setUsername] = useState("6100319");
+  const [password, setPassword] = useState("123456");
+
   const fetch = useFetch();
 
   const handleLogIn = async () => {
     setIsLoading(true)
 
     const payload = {
-      employee: "3",
-      password: "3",
-      // employee: username,
-      // password: password,
+      // employee: "3",
+      // password: "3",
+      employee: username,
+      password: password,
     };
 
     const data = await fetch.fetchData({
