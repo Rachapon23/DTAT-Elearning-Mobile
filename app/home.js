@@ -21,6 +21,8 @@ import React, { useState } from "react";
 import Slider_announce from "../components/Slider_announce";
 import Slider_course from "../components/Slider_course";
 
+const HEIGHT = Dimensions.get("window").height;
+
 const AboutButton = ({ text, to }) => {
   return (
     <Link href={to} asChild>
@@ -222,23 +224,24 @@ const content = () => {
           </Text>
           <AboutButton text="About Us" to="/about-us" />
         </View>
-        <View style={styles.view_slider}>
-          <Slider_announce items={announce} />
-        </View>
-        <View style={styles.view_slider}>
-          <Text style={styles.text_status_course}>Public Course</Text>
-          <Slider_course items={course_public} />
-        </View>
-        <View style={styles.view_slider}>
-          <Text style={styles.text_status_course}>Private Course</Text>
-          <Slider_course items={course_private} />
-        </View>
-        <View style={{ height: 40, padding: 10 }}>
-          <Text>version 1.0.0</Text>
-        </View>
-        {/* <PopularCourse/> */}
-        {/* <Button title="Click" onPress={fat()}> */}
-        {/* </Button> */}
+        {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
+          : <View>
+            <View style={styles.view_slider}>
+              <Slider_announce items={announce} />
+            </View>
+            <View style={styles.view_slider}>
+              <Text style={styles.text_status_course}>Public Course</Text>
+              <Slider_course items={course_public} />
+            </View>
+            <View style={styles.view_slider}>
+              <Text style={styles.text_status_course}>Private Course</Text>
+              <Slider_course items={course_private} />
+            </View>
+            <View style={{ height: 40, padding: 10 }}>
+              <Text>version 1.0.0</Text>
+            </View>
+          </View>
+        }
       </ScrollView>
     </SafeAreaView>
   );
@@ -276,4 +279,9 @@ const styles = StyleSheet.create({
   text_aboutus: {
     color: "#ffa69a",
   },
+  loading: {
+    height: HEIGHT - 400,
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });

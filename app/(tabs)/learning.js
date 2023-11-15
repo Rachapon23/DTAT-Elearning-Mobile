@@ -9,6 +9,8 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  ActivityIndicator,
+
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
@@ -21,6 +23,8 @@ const HEIGHT = Dimensions.get("window").height;
 const content = () => {
   const fetch = useFetch();
   const [activity, setActivity] = useState([]);
+  const [isLoading, setIsLoading] = useState(true)
+
 
   const getData = async () => {
     const user = await SecureStore.getItemAsync("user_id");
@@ -29,6 +33,9 @@ const content = () => {
     });
     // console.log(res?.data)
     setActivity(res?.data);
+    if (res?.data) {
+      setIsLoading(false)
+    }
   };
 
   useEffect(() => {
@@ -39,31 +46,33 @@ const content = () => {
     <View>
       <SafeAreaView>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.container}>
-            {activity.length <= 0 ? (
-              <View style={styles.data_empty}>
-                <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
-                <Text>no data</Text>
-              </View>
-            ) : (
-              <View>
-                {activity?.map((item, index) => {
-                  if(item?.result === 0){
-                    return (
-                      <ListActivity
-                        key={index}
-                        item={item}
-                        course={`${item?.course?._id}`}
-                        exam={`${item?.course?.exam}`}
-                        activity={`${item?._id}`}
-                      />
-                    )
-                  }
-                })}
-              </View>
-            )}
-          </View>
-        </ScrollView>
+          {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
+            : <View style={styles.container}>
+              {activity.length <= 0 ? (
+                <View style={styles.data_empty}>
+                  <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
+                  <Text>no data</Text>
+                </View>
+              ) : (
+                <View>
+                  {activity?.map((item, index) => {
+                    if (item?.result === 0) {
+                      return (
+                        <ListActivity
+                          key={index}
+                          item={item}
+                          course={`${item?.course?._id}`}
+                          exam={`${item?.course?.exam}`}
+                          activity={`${item?._id}`}
+                        />
+                      )
+                    }
+                  })}
+                </View>
+              )}
+            </View>
+          }        
+          </ScrollView>
       </SafeAreaView>
     </View>
   );
@@ -81,5 +90,9 @@ const styles = StyleSheet.create({
     height: HEIGHT - 200,
     justifyContent: "center",
     alignItems: "center",
-  },
+  }, loading: {
+    height: HEIGHT - 200,
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });

@@ -9,6 +9,8 @@ import {
   StyleSheet,
   Image,
   Dimensions,
+  ActivityIndicator,
+
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Theme1 from "theme/Theme1";
@@ -16,14 +18,15 @@ import { Calendar, LocaleConfig } from "react-native-calendars";
 import useFetch from "../../hook/useFetch";
 import ListCalendar from "components/ListCalendar";
 
-
+const HEIGHT = Dimensions.get("window").height;
+const WIDTH = Dimensions.get("window").width;
 
 const content = () => {
   const fetch = useFetch();
-  const WIDTH = Dimensions.get("window").width;
+
   const [evens, setEvens] = useState([]);
   const [evenRender, setEvenRender] = useState({});
-
+  const [isLoading, setIsLoading] = useState(true)
   var getDaysArray = function (start, end) {
     for (var arr = [], dt = new Date(start); dt < new Date(end); dt.setDate(dt.getDate() + 1)) {
       let date_new = dt
@@ -112,10 +115,10 @@ const content = () => {
       }
     }
     setEvenRender(obj)
-    // console.log(":d:: ", obj['2023-10-30'])
-
+    if (obj) {
+      setIsLoading(false)
+    }
   }
-
 
   useEffect(() => {
     getData();
@@ -137,29 +140,15 @@ const content = () => {
                 markedDates={evenRender}
                 style={[styles.calendar, { width: WIDTH - 20 }]}
               />
-              {evens?.length >= 0 && evens?.map((item, index) => (
-                <ListCalendar key={index} item={item} />
-              ))}
+
+              {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
+                : <View>
+                  {evens?.length >= 0 && evens?.map((item, index) => (
+                    <ListCalendar key={index} item={item} />
+                  ))}
+                </View>
+              }
             </View>
-            {/* <Calendar
-              markingType="multi-period"
-              markedDates={{
-                '2023-11-14': {
-                  periods: [
-                    { startingDay: false, endingDay: true, color: '#5f9ea0' },
-                    { startingDay: false, endingDay: true, color: '#ffa500' },
-                    { startingDay: true, endingDay: false, color: '#f0e68c' }
-                  ]
-                },
-                '2023-11-15': {
-                  periods: [
-                    { startingDay: true, endingDay: false, color: '#ffa500' },
-                    { color: 'transparent' },
-                    { startingDay: false, endingDay: false, color: '#f0e68c' }
-                  ]
-                }
-              }}
-            /> */}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -180,6 +169,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(159, 187, 246, 0.2)",
     height: 320,
     marginBottom: 30,
-  },
-
+  }, loading: {
+    height: HEIGHT - 600,
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });

@@ -10,6 +10,8 @@ import {
   Image,
   Dimensions,
   Keyboard,
+  ActivityIndicator,
+
 } from "react-native";
 import React from "react";
 import ListCourse from "components/ListCourse";
@@ -20,6 +22,8 @@ import { useRef, useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 
 const WIDTH = Dimensions.get("window").width;
+const HEIGHT = Dimensions.get("window").height;
+
 const SearchBar = ({
   clicked,
   searchPhrase,
@@ -29,7 +33,10 @@ const SearchBar = ({
   setData1,
   data2,
   setData2,
+  setIsLoading
 }) => {
+  // setIsLoading(true)
+
   return (
     <View style={stylesSB.container}>
       <View
@@ -59,14 +66,18 @@ const SearchBar = ({
               });
               setData2(newData);
               setSearchPhrase(event);
+              // setIsLoading(false)
             } else {
               setData2(data1);
               setSearchPhrase(event);
+              // setIsLoading(false)
             }
           }}
           // onChangeText={setSearchPhrase}
           onFocus={() => {
             setClicked(true);
+            // setIsLoading(false)
+
           }}
         />
         {/* cross Icon, depending on whether the search bar is clicked or not */}
@@ -75,6 +86,8 @@ const SearchBar = ({
             onPress={() => {
               setData2(data1);
               setSearchPhrase("");
+              // setIsLoading(false)
+
             }}
           >
             <Ionicons name="close" size={25} style={{ paddingRight: 10 }} />
@@ -101,6 +114,7 @@ const SearchBar = ({
 };
 
 const content = () => {
+  const [isLoading, setIsLoading] = useState(true)
 
   const [course, setCourse] = useState([]);
   const [course2, setCourse2] = useState([]);
@@ -123,6 +137,9 @@ const content = () => {
     });
     setCourse(res?.data);
     setCourse2(res?.data);
+    if (res?.data) {
+      setIsLoading(false)
+    }
   };
 
   useEffect(() => {
@@ -143,13 +160,18 @@ const content = () => {
               setData1={setCourse}
               data2={course2}
               setData2={setCourse2}
+              setIsLoading={setIsLoading}
             />
-            {course2.length >= 0 && course2?.map((item, index) => (
-              <ListCourse key={index} item={item} to={`enroll/${item?._id}`}/>
-            ))}
+            {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
+              : <View>
+                {course2.length >= 0 && course2?.map((item, index) => (
+                  <ListCourse key={index} item={item} to={`enroll/${item?._id}`} />
+                ))}
+              </View>
+            }
           </View>
         </ScrollView>
-        </SafeAreaView>
+      </SafeAreaView>
     </View>
   );
 };
@@ -162,6 +184,11 @@ export default BrowseCourse;
 
 const styles = StyleSheet.create({
   container: { padding: 10, marginTop: 20, alignItems: "center" },
+  loading: {
+    height: HEIGHT - 300,
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });
 
 const stylesSB = StyleSheet.create({
