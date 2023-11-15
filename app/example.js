@@ -12,6 +12,7 @@ import {
   Image,
   Dimensions,
   Keyboard,
+  RefreshControl,
 } from "react-native";
 import { Link, Stack } from "expo-router";
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -24,6 +25,7 @@ import axios from "axios";
 import { REACT_APP_API, REACT_APP_IMG } from "@env";
 import * as SecureStore from 'expo-secure-store';
 import ImagePrivate from "components/ImagePrivate";
+import { Video, ResizeMode } from "expo-av";
 
 const SLIDER_WIDTH = Dimensions.get('window').width + 0
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9)
@@ -209,12 +211,11 @@ const GetPrivateFile = () => {
 
   return (
     <View>
-      <Image source={{ uri: data }} style={{ height: 200, width: 420 }} onError={(e) => console.log("ERROR", e.nativeEvent.error)}/>
+      <Image source={{ uri: data }} style={{ height: 200, width: 420 }} onError={(e) => console.log("ERROR", e.nativeEvent.error)} />
       <Text>{data}</Text>
     </View>
   )
 }
-
 
 // -------------------------------------------------
 
@@ -238,14 +239,48 @@ const Exmaple = () => {
   // ];
   const isCarousel = useRef(null)
   const [index, setIndex] = useState(0)
-
-
   const [searchPhrase, setSearchPhrase] = useState("");
   const [clicked, setClicked] = useState(false);
 
+  const video = useRef(null);
+  const [data, setData] = useState(null);
+  const getFileToken = async () => {
+    const token = await SecureStore.getItemAsync("file_token");
+    setData(`${REACT_APP_IMG}/topic?file=${'file-1688393195045-697297649.mp4'}&token=${token}`);
+  };
+  useEffect(() => {
+    getFileToken();
+  }, []);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [text, setText] = useState("Before Refresh");
+  const onRefresh = () => {
+    setText("After Refresh call API");
+  }
+
   return (
-    <View>
-      <GetPrivateFile /> 
+    <View style={{flex: 1}}>
+      {/* <GetPrivateFile />  */}
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
+        <Text>{text}</Text>
+        <Video
+          ref={video}
+          style={styles.video}
+          source={{
+            uri: data,
+          }}
+          useNativeControls
+          resizeMode={ResizeMode.CONTAIN}
+          isLooping
+        />
+      </ScrollView>
     </View>
     // <SafeAreaView>
     //   <ScrollView showsVerticalScrollIndicator={false}>
@@ -292,11 +327,26 @@ const Exmaple = () => {
     //       <Youtube />
 
     //       {/* <GetPrivateFile /> */}
-          
+
     //     </View>
     //   </ScrollView>
     // </SafeAreaView>
   );
 };
+
+const WIDTH = Dimensions.get("window").width;
+const styles = StyleSheet.create({
+  img: { height: (WIDTH - 40) / 1.7, width: WIDTH - 40, marginBottom: 10 },
+  container: {},
+  video: { height: (WIDTH - 40) / 1.7, width: WIDTH - 40, marginBottom: 10 },
+  buttons: {},
+  sub_content: {
+    padding: 5,
+  },
+  link_text: {
+    color: "#0275d8",
+  },
+});
+
 
 export default Exmaple;

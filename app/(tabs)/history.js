@@ -71,7 +71,7 @@ const content = () => {
                 })}
                 {nodata.every(istrue) ? <></> : <View style={styles.data_empty}>
                   <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
-                  <Text>no data</Text>
+                  <Text>No Data</Text>
                 </View>}
               </View>
             )}
