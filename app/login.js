@@ -29,6 +29,7 @@ const ScreenHeaderButton = ({ text, to }) => {
 };
 
 const content = () => {
+  const [isLoading, setIsLoading] = useState(false);
 
   // router.replace("/homein");
   const [username, setUsername] = useState("6100319");

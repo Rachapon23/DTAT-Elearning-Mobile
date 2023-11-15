@@ -13,7 +13,9 @@ import React, { useState, useRef } from "react";
 import { Link, Stack, useRouter } from "expo-router";
 
 import { REACT_APP_IMG } from "@env";
+import * as SecureStore from "expo-secure-store";
 
+const AUTHTOKEN = SecureStore.getItemAsync("token");
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
 const DEFAULT_IMAGE =
@@ -97,12 +99,18 @@ const Slider = ({ items }) => {
 
   const navigate = (href) => {
     if (!href) return;
-    router.replace(href);
+    router.push(href);
   };
 
   const handleTouchEnd = () => {
     // enter path of course
-    navigate('/');
+    // navigate('/');
+    if (!AUTHTOKEN) {
+      navigate('/login');
+    } else {
+      // console.log(`/enroll/${items[index]?._id}`);
+      navigate(`/enroll/${items[index]?._id}`);
+    }
   }
 
   return (
