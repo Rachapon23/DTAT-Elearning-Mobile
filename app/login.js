@@ -29,11 +29,17 @@ const ScreenHeaderButton = ({ text, to }) => {
 };
 
 const content = () => {
+<<<<<<< HEAD
+  // router.replace("/homein");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+=======
 
   // router.replace("/homein");
   const [username, setUsername] = useState("6100319");
   const [password, setPassword] = useState("123456");
 
+>>>>>>> ced1e8ae4289e8c298ea1d54d0df3720c248de03
   const fetch = useFetch();
 
   const handleLogIn = async () => {
