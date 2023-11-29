@@ -10,6 +10,7 @@ import {
   Image,
   Dimensions,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Theme1 from "theme/Theme1";
@@ -17,12 +18,17 @@ import { Calendar, LocaleConfig } from "react-native-calendars";
 import useFetch from "hook/useFetch";
 import ListCalendar from "components/ListCalendar";
 
+const HEIGHT = Dimensions.get("window").height;
+const WIDTH = Dimensions.get("window").width;
+
+
 const content = () => {
   const fetch = useFetch();
-  const WIDTH = Dimensions.get("window").width;
+
   const [evens, setEvens] = useState([]);
   const [evenRender, setEvenRender] = useState({});
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
 
   var getDaysArray = function (start, end) {
     for (var arr = [], dt = new Date(start); dt < new Date(end); dt.setDate(dt.getDate() + 1)) {
@@ -111,8 +117,9 @@ const content = () => {
       }
     }
     setEvenRender(obj)
-    // console.log(":d:: ", obj['2023-10-30'])
-
+    if (obj) {
+      setIsLoading(false)
+    }
   }
 
   const onRefresh = () => {
@@ -147,9 +154,14 @@ const content = () => {
                 markedDates={evenRender}
                 style={[styles.calendar, { width: WIDTH - 20 }]}
               />
-              {evens?.length >= 0 && evens?.map((item, index) => (
-                <ListCalendar key={index} item={item} />
-              ))}
+
+              {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
+                : <View>
+                  {evens?.length >= 0 && evens?.map((item, index) => (
+                    <ListCalendar key={index} item={item} />
+                  ))}
+                </View>
+              }
             </View>
           </View>
         </ScrollView>
@@ -171,6 +183,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(159, 187, 246, 0.2)",
     height: 320,
     marginBottom: 30,
-  },
-
+  }, loading: {
+    height: HEIGHT - 600,
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });

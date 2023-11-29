@@ -45,8 +45,9 @@ const content = () => {
     const [even, setEven] = useState([]);
     const [month, setMonth] = useState("");
     const [evenRender, setEvenRender] = useState({});
-    const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading_btn, setIsLoading_btn] = useState(false)
 
 
     const fetch = useFetch();
@@ -118,6 +119,7 @@ const content = () => {
     }
 
     const getData = async () => {
+        // console.log(id)
         const data = await fetch.fetchData({
             endpoint: `get-course/${id}?fetch=name,detail,image,condition,teacher,type&pops=path:condition$populate:plant$select:plant maximum current,path:teacher$select:firstname lastname -_id`,
         });
@@ -127,8 +129,13 @@ const content = () => {
         });
         setConditionData(data?.data);
         isPassCondition(data?.data);
-        getCalendar();
-        setIsLoading(false);
+
+        getCalendar()
+        if (data?.data) {
+            setIsLoading_btn(false)
+            setIsLoading(false)
+        }
+
     };
 
     const onRefresh = () => {
@@ -176,6 +183,7 @@ const content = () => {
             }
         }
         setEvenRender(() => obj)
+
     };
 
     useEffect(() => {
@@ -191,6 +199,8 @@ const content = () => {
 
     const handleAddCourse = async () => {
         console.log("handleAddCourse")
+        setIsLoading_btn(true)
+
         if (!isPassCondition(conditionData)) {
             // alert user or something
             console.log("????")
@@ -218,66 +228,74 @@ const content = () => {
                     />
                 }
             >
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Image
-                            source={{
-                                uri: course?.image?.name
-                                    ? REACT_APP_IMG + "/course/" + course?.image?.name
-                                    : DEFAULT_IMAGE,
-                            }}
-                            style={styles.image}
-                        />
-                        <View style={styles.body}>
-                            <Text style={styles.text_1}>{course?.name}</Text>
-                            <Text style={styles.text_2}>{course?.detail}</Text>
-                            <View style={styles.badge}>
-                                <Text >
-                                    {course?.type ? "Public" : "Private"} Course
+                {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
+                    : <View style={styles.container}>
+                        <View style={styles.header}>
+                            <Image
+                                source={{
+                                    uri: course?.image?.name
+                                        ? REACT_APP_IMG + "/course/" + course?.image?.name
+                                        : DEFAULT_IMAGE,
+                                }}
+                                style={styles.image}
+                            />
+                            <View style={styles.body}>
+                                <Text style={styles.text_1}>{course?.name}</Text>
+                                <Text style={styles.text_2}>{course?.detail}</Text>
+                                <View style={styles.badge}>
+                                    <Text >
+                                        {course?.type ? "Public" : "Private"} Course
+                                    </Text>
+                                </View>
+                                <Text style={styles.text_3}>
+                                    By {course?.teacher?.firstname} {course?.teacher?.lastname}
                                 </Text>
                             </View>
-                            <Text style={styles.text_3}>
-                                By {course?.teacher?.firstname} {course?.teacher?.lastname}
-                            </Text>
                         </View>
-                    </View>
-                    <View style={styles.box}>
-                        {
-                            renderButton()
+                        <View style={styles.box}>
+                            <TouchableOpacity style={styles.registered_btn}
+                                onPress={() => registered ? handleOpenCourse() : handleAddCourse()}
+                            >{isLoading_btn ? <View><ActivityIndicator color="#ffa69a" /></View>
+                                : <Text style={styles.registered_Text}>
+                                    {registered ? "Go to Course" : "Add Course"}
+                                </Text>
+                                }
+                            </TouchableOpacity>
+                        </View>
+                        {course?.condition?.length > 0 && course?.condition?.map((item, index) => {
+                            let persen = item?.current == 0 ? 0 : item?.current / item?.maximum
+                            return (
+                                <View key={index} style={styles.box}>
+                                    <Text>Plant: {item.plant.name}</Text>
+                                    <Text>Amount: {item.current} / {item.maximum}</Text>
+                                    {true ? <View>
+                                        <ProgressBarAndroid
+                                            styleAttr="Horizontal"
+                                            indeterminate={false}
+                                            progress={persen}
+                                        />
+
+                                    </View> : <View>
+                                        <ProgressViewIOS
+                                            style={styles.progress}
+                                            progressTintColor=""
+                                            progress={persen}
+                                        />
+                                    </View>}
+                                </View>
+                            )
+                        })}
+                        {even && month ? <View>
+                            <Calendar
+                                current={month}
+                                markingType={"period"}
+                                markedDates={evenRender}
+                                style={[styles.calendar, { width: WIDTH - 20 }]}
+                            />
+                        </View> : <></>
                         }
                     </View>
-                    {course?.condition?.length > 0 && course?.condition?.map((item, index) => {
-                        let persen = item?.current == 0 ? 0 : item?.current / item?.maximum
-                        return (
-                            <View key={index} style={styles.box}>
-                                <Text>Plant: {item.plant.name}</Text>
-                                <Text>Amount: {item.current} / {item.maximum}</Text>
-                                {true ? <View>
-                                    <ProgressBarAndroid
-                                        styleAttr="Horizontal"
-                                        indeterminate={false}
-                                        progress={persen}
-                                    />
-
-                                </View> : <View>
-                                    <ProgressViewIOS
-                                        style={styles.progress}
-                                        progressTintColor=""
-                                        progress={persen}
-                                    />
-                                </View>}
-                            </View>
-                        )
-                    })}
-                    {even && month ? <View>
-                        <Calendar
-                            current={month}
-                            markingType={"period"}
-                            markedDates={evenRender}
-                            style={[styles.calendar, { width: WIDTH - 20 }]}
-                        />
-                    </View> : <></>}
-                </View>
+                }
             </ScrollView>
         </SafeAreaView>
     );
@@ -350,5 +368,9 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(159, 187, 246, 0.2)",
         height: 320,
         marginBottom: 20,
-    },
+    }, loading: {
+        height: HEIGHT - 200,
+        justifyContent: "center",
+        alignItems: "center",
+    }
 });

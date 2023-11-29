@@ -21,16 +21,6 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
 const DEFAULT_IMAGE =
   "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
-const ScreenHeaderButton = ({ text, to }) => {
-  return (
-    <Link href={to} asChild>
-      <TouchableOpacity>
-        <Text>{text}</Text>
-      </TouchableOpacity>
-    </Link>
-  );
-};
-
 const CarouselCardItem = ({ item, index }) => {
   // console.log("ITEM",index,":: ",item?.image?.name)
   // console.log("ITEM URL:: ",REACT_APP_IMG+"/course/"+item?.image?.name)
