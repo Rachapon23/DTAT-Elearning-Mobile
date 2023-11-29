@@ -34,18 +34,13 @@ const TabsLayout = () => {
     );
   };
 
-  const onLogout = async () => {
-    await SecureStore.deleteItemAsync("token");
-    await SecureStore.deleteItemAsync("file_token");
-    await SecureStore.deleteItemAsync("firstname");
-    await SecureStore.deleteItemAsync("role");
-    await SecureStore.deleteItemAsync("user_id");
-    router.push('/home');
+  const openDrawer = async () => {
+    navigation.dispatch(DrawerActions.openDrawer())
   }
 
   const logout = () => {
     return (
-      <TouchableOpacity style={styles.Touc_logout} onPress={onLogout}>
+      <TouchableOpacity style={styles.Touc_logout} onPress={openDrawer}>
         <Ionicons name={"person-circle-outline"} size={35} color={"gray"} />
       </TouchableOpacity>
     );

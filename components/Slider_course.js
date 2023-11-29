@@ -100,9 +100,10 @@ const Slider = ({ items }) => {
     router.replace(href);
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e) => {
     // enter path of course
-    navigate('/');
+    console.log('E:',items[index]);
+    // navigate('/');
   }
 
   return (

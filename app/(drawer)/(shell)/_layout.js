@@ -34,12 +34,12 @@ const Layout = () => {
     if (!linkHome) return
     return (
       <Link href={linkHome} asChild>
-      <TouchableOpacity >
-        <Image
-          style={styles.logo_denso}
-          source={require("public/denso.png")}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity >
+          <Image
+            style={styles.logo_denso}
+            source={require("public/denso.png")}
+          />
+        </TouchableOpacity>
       </Link>
     );
   };
@@ -58,18 +58,20 @@ const Layout = () => {
   return (
     <Stack
       screenOptions={{
-        header: () => null,
         headerStyle: {
           backgroundColor: "#9fbbf6",
         },
       }}
     >
-      <Stack.Screen name="index" options={{ headerShown: false }} />
+      {/* <Stack.Screen name="index" options={{ headerShown: false }} /> */}
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="enroll/[id]"
         options={{
           headerTitle: "Enroll",
+          contentStyle: {
+            paddingTop: 500,
+          }
         }}
       />
       <Stack.Screen

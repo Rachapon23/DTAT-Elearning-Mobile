@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import useFetch from "../../hook/useFetch";
+import useFetch from "hook/useFetch";
 import {
   SafeAreaView,
   ScrollView,
