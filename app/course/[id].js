@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import { REACT_APP_IMG } from "@env";
 import { useEffect, useState } from "react";
@@ -34,6 +35,7 @@ const content = () => {
   const [topics, setTopics] = useState([]);
   const [teacherProfile, setTeacherProfile] = useState();
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
 
   const fetch = useFetch();
   const router = useRouter();
@@ -58,6 +60,9 @@ const content = () => {
       endpoint: `get-profile/user/${course?.teacher?._id}`,
     });
     setTeacherProfile(teacher?.data);
+    if (topics) {
+      setIsLoading(false)
+    }
   };
 
   const onRefresh = () => {
@@ -82,6 +87,7 @@ const content = () => {
 
   return (
     <SafeAreaView>
+
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -89,67 +95,69 @@ const content = () => {
             onRefresh={onRefresh}
           />
         }
-      >
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Image
-              source={{
-                uri: course?.image?.name
-                  ? REACT_APP_IMG + "/course/" + course?.image?.name
-                  : DEFAULT_IMAGE,
-              }}
-              style={styles.image}
-            />
-            <View style={styles.body}>
-              <Text style={styles.text_1}>{course?.name}</Text>
-              <Text style={styles.text_2}>{course?.detail}</Text>
-              <TouchableOpacity onPress={alertTeacher}>
-                <Text style={styles.text_3}>
-                  By {course?.teacher?.firstname} {course?.teacher?.lastname}
-                </Text>
-              </TouchableOpacity>
-
-            </View>
-          </View>
-          {course?.enabled ? (
-            <View>
-              {course?.exam?._id ? (
-                <View style={styles.exam}>
-                  <Text style={[styles.text_2, { marginBottom: 5, textAlign: "center" }]}>
-                    Exam: {course?.exam?.name}
+       >
+        {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
+          : <View style={styles.container}>
+            <View style={styles.header}>
+              <Image
+                source={{
+                  uri: course?.image?.name
+                    ? REACT_APP_IMG + "/course/" + course?.image?.name
+                    : DEFAULT_IMAGE,
+                }}
+                style={styles.image}
+              />
+              <View style={styles.body}>
+                <Text style={styles.text_1}>{course?.name}</Text>
+                <Text style={styles.text_2}>{course?.detail}</Text>
+                <TouchableOpacity onPress={alertTeacher}>
+                  <Text style={styles.text_3}>
+                    By {course?.teacher?.firstname} {course?.teacher?.lastname}
                   </Text>
-                  <TouchableOpacity
-                    style={[styles.toexam, { width: WIDTH - 40 }]}
-                    onPress={() => {
-                      navigate(`exam/{"exam":"${params?.exam}","activity":"${params?.activity}","course":"${params?.course}"}`);
-                    }}
-                  >
-                    <Text style={styles.start}>Start</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <></>
-              )}
-              {topics?.length > 0 ? <>
-                {
-                  topics?.map((item, index) => (
-                    <ListTopic key={index} item={item} />
-                  ))
-                }
-              </> : <View style={styles.course_disabled}>
+                </TouchableOpacity>
+
+              </View>
+            </View>
+            {course?.enabled ? (
+              <View>
+                {course?.exam?._id ? (
+                  <View style={styles.exam}>
+                    <Text style={[styles.text_2, { marginBottom: 5, textAlign: "center" }]}>
+                      Exam: {course?.exam?.name}
+                    </Text>
+                    <TouchableOpacity
+                      style={[styles.toexam, { width: WIDTH - 40 }]}
+                      onPress={() => {
+                        navigate(`exam/{"exam":"${params?.exam}","activity":"${params?.activity}","course":"${params?.course}"}`);
+                      }}
+                    >
+                      <Text style={styles.start}>Start</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <></>
+                )}
+                {topics?.length > 0 ? <>
+                  {
+                    topics?.map((item, index) => (
+                      <ListTopic key={index} item={item} />
+                    ))
+                  }
+                </> : <View style={styles.course_disabled}>
+                  <Ionicons name={"warning-outline"} size={35} color={"gray"} />
+
+                  <Text>no content</Text>
+                </View>}
+              </View>
+            ) : (
+              <View style={styles.course_disabled}>
                 <Ionicons name={"warning-outline"} size={35} color={"gray"} />
 
-                <Text>no content</Text>
-              </View>}
-            </View>
-          ) : (
-            <View style={styles.course_disabled}>
-              <Ionicons name={"warning-outline"} size={35} color={"gray"} />
-
-              <Text>Course Not Avaliable</Text>
-            </View>
-          )}
-        </View>
+                <Text>Course Not Avaliable</Text>
+              </View>
+            )}
+          </View>
+        }
       </ScrollView>
     </SafeAreaView>
   );
@@ -215,4 +223,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   start: { color: "#fff", textAlign: "center" },
+  loading: {
+    height: HEIGHT - 200,
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });
