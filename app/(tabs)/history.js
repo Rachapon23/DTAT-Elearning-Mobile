@@ -9,13 +9,13 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  RefreshControl,
   ActivityIndicator,
-
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
 import ListActivity from "components/ListActivity";
-import useFetch from "../../hook/useFetch";
+import useFetch from "hook/useFetch";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import * as SecureStore from "expo-secure-store";
 
@@ -24,7 +24,9 @@ const content = () => {
   const fetch = useFetch();
   const [activity, setActivity] = useState([]);
   const [nodata, setNodata] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true)
+  
   const getData = async () => {
     const user = await SecureStore.getItemAsync("user_id");
     const res = await fetch.fetchData({
@@ -36,6 +38,10 @@ const content = () => {
     }
   };
 
+  const onRefresh = () => {
+    getData()
+  }
+
   useEffect(() => {
     getData();
   }, []);
@@ -45,7 +51,15 @@ const content = () => {
   return (
     <View>
       <SafeAreaView>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        >
           {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
             : <View style={styles.container}>
             {activity.length <= 0 ? (

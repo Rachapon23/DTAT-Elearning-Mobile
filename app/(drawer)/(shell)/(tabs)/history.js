@@ -10,7 +10,6 @@ import {
   Dimensions,
   Image,
   RefreshControl,
-  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
@@ -23,8 +22,9 @@ const HEIGHT = Dimensions.get("window").height;
 const content = () => {
   const fetch = useFetch();
   const [activity, setActivity] = useState([]);
+  const [nodata, setNodata] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true)
+
 
   const getData = async () => {
     const user = await SecureStore.getItemAsync("user_id");
@@ -32,9 +32,6 @@ const content = () => {
       endpoint: `list-activity?search=user:${user}&fetch=-ans,-__v&pops=path:course$select:name exam image type completed`,
     });
     setActivity(res?.data);
-    if (res?.data) {
-      setIsLoading(false)
-    }
   };
 
   const onRefresh = () => {
@@ -45,10 +42,12 @@ const content = () => {
     getData();
   }, []);
 
+  const istrue = (currentValue) => currentValue === true;
+
   return (
     <View>
       <SafeAreaView>
-        <ScrollView 
+        <ScrollView
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -57,43 +56,47 @@ const content = () => {
             />
           }
         >
-          {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
-            : <View style={styles.container}>
-              {activity.length <= 0 ? (
-                <View style={styles.data_empty}>
+          <View style={styles.container}>
+            {activity.length <= 0 ? (
+              <View style={styles.data_empty}>
+                <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
+                <Text>no data</Text>
+              </View>
+            ) : (
+              <View>
+                {activity?.map((item, index) => {
+                  if (item?.result !== 0) {
+                    nodata.push(true)
+                    return (
+                      <ListActivity
+                        key={index}
+                        item={item}
+                        course={`${item?.course?._id}`}
+                        exam={`${item?.course?.exam}`}
+                        activity={`${item?._id}`}
+                      />
+                    )
+                  } else { nodata.push(false) }
+                })}
+                {nodata.every(istrue) ? <></> : <View style={styles.data_empty}>
                   <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
-                  <Text>no data</Text>
-                </View>
-              ) : (
-                <View>
-                  {activity?.map((item, index) => {
-                    if (item?.result === 0) {
-                      return (
-                        <ListActivity
-                          key={index}
-                          item={item}
-                          course={`${item?.course?._id}`}
-                          exam={`${item?.course?.exam}`}
-                          activity={`${item?._id}`}
-                        />
-                      )
-                    }
-                  })}
-                </View>
-              )}
-            </View>
-          }        
-          </ScrollView>
+                  <Text>No Data</Text>
+                </View>}
+              </View>
+            )}
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
 };
 
-const Learning = () => {
-  return <Theme1 content={content()} />;
-};
 
-export default Learning;
+const History = () => {
+  return <Theme1 content={content()} />;
+}
+
+export default History;
 
 const styles = StyleSheet.create({
   container: { padding: 10, marginTop: 20, alignItems: "center" },
@@ -101,9 +104,5 @@ const styles = StyleSheet.create({
     height: HEIGHT - 200,
     justifyContent: "center",
     alignItems: "center",
-  }, loading: {
-    height: HEIGHT - 200,
-    justifyContent: "center",
-    alignItems: "center",
-  }
+  },
 });

@@ -9,8 +9,6 @@ import {
   StyleSheet,
   Image,
   RefreshControl,
-  Dimensions,
-  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import Theme1 from "theme/Theme1";
@@ -19,7 +17,6 @@ import Slider_course from "components/Slider_course";
 import { Link, Stack, useRouter } from "expo-router";
 import useFetch from "hook/useFetch";
 
-const HEIGHT = Dimensions.get("window").height;
 
 const AboutButton = ({ text, to }) => {
   return (
@@ -65,24 +62,20 @@ const content = () => {
           </Text>
           <AboutButton text="About Us" to="/about-us" />
         </View>
-        {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
-          : <View>
-            <View style={styles.view_slider}>
-              <Slider_announce items={announce} />
-            </View>
-            <View style={styles.view_slider}>
-              <Text style={styles.text_status_course}>Public Course</Text>
-              <Slider_course items={course_public} />
-            </View>
-            <View style={styles.view_slider}>
-              <Text style={styles.text_status_course}>Private Course</Text>
-              <Slider_course items={course_private} />
-            </View>
-            <View style={{ height: 40, padding: 10 }}>
-              <Text>version 1.0.0</Text>
-            </View>
-          </View>
-        }
+        <View style={styles.view_slider}>
+          <Slider_announce items={announce} />
+        </View>
+        <View style={styles.view_slider}>
+          <Text style={styles.text_status_course}>Public Course</Text>
+          <Slider_course items={course_public} />
+        </View>
+        <View style={styles.view_slider}>
+          <Text style={styles.text_status_course}>Private Course</Text>
+          <Slider_course items={course_private} />
+        </View>
+        <View style={{ height: 40, padding: 10 }}>
+          <Text>version 1.0.0</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -115,10 +108,5 @@ const styles = StyleSheet.create({
   text_aboutus: {
     color: "#ffa69a",
   },
-  loading: {
-    height: HEIGHT - 400,
-    justifyContent: "center",
-    alignItems: "center",
-  }
 
 });

@@ -102,7 +102,7 @@ const Slider = ({ items }) => {
     router.push(href);
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e) => {
     // enter path of course
     // navigate('/');
     if (!AUTHTOKEN) {
