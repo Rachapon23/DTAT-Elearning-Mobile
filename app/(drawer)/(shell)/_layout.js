@@ -22,8 +22,8 @@ const Layout = () => {
   const [linkHome, setLinkHome] = useState(null)
 
   const checkLogin = async () => {
-    const link = await SecureStore.getItemAsync("token");
-    setLinkHome(link ? '/homein' : '/home')
+    const token = await SecureStore.getItemAsync("token");
+    setLinkHome(token ? '/homein' : '/home')
   }
 
   useEffect(() => {
@@ -34,12 +34,12 @@ const Layout = () => {
     if (!linkHome) return
     return (
       <Link href={linkHome} asChild>
-        <TouchableOpacity >
-          <Image
-            style={styles.logo_denso}
-            source={require("public/denso.png")}
-          />
-        </TouchableOpacity>
+      <TouchableOpacity >
+        <Image
+          style={styles.logo_denso}
+          source={require("public/denso.png")}
+        />
+      </TouchableOpacity>
       </Link>
     );
   };
@@ -69,9 +69,6 @@ const Layout = () => {
         name="enroll/[id]"
         options={{
           headerTitle: "Enroll",
-          contentStyle: {
-            paddingTop: 500,
-          }
         }}
       />
       <Stack.Screen

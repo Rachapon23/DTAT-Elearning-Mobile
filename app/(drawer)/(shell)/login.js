@@ -29,14 +29,16 @@ const ScreenHeaderButton = ({ text, to }) => {
 };
 
 const content = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   // router.replace("/homein");
   const [username, setUsername] = useState("6100319");
   const [password, setPassword] = useState("123456");
+
   const fetch = useFetch();
 
   const handleLogIn = async () => {
-    // console.log("username: ", username);
-    // console.log("password: ", password);
+    setIsLoading(true)
 
     const payload = {
       // employee: "3",
@@ -51,22 +53,24 @@ const content = () => {
       payload,
     });
     if (!data?.error) {
-      // console.log("data=>", JSON.stringify(data?.token))
+      console.log("data=>", JSON.stringify(data?.token))
       await SecureStore.setItemAsync("token", data?.token);
       await SecureStore.setItemAsync("file_token", data?.file_token);
-      await SecureStore.setItemAsync("firstname", data?.payload?.user?.firstname);
-      await SecureStore.setItemAsync("lastname", data?.payload?.user?.lastname);
-      await SecureStore.setItemAsync("employee", data?.payload?.user?.employee);
+      await SecureStore.setItemAsync("firstname", data?.payload?.user.firstname);
       await SecureStore.setItemAsync("role", data?.payload?.user?.role);
       await SecureStore.setItemAsync("user_id", data?.payload?.user?.user_id);
+      setIsLoading(false)
+
       router.replace("/homein");
     } else {
+      setIsLoading(false)
+
       alert(data?.error);
     }
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView >
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View>
@@ -89,7 +93,10 @@ const content = () => {
             </View>
           </View>
           <TouchableOpacity style={styles.button_login} onPress={handleLogIn}>
-            <Text style={styles.text_login}>LogIn</Text>
+            {isLoading ? <View><ActivityIndicator size="large" color="#ffa69a" /></View>
+              : <Text style={styles.text_login}>LogIn</Text>
+            }
+
           </TouchableOpacity>
         </View>
       </ScrollView>

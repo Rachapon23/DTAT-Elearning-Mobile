@@ -10,6 +10,7 @@ import {
   Dimensions,
   Image,
   RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
@@ -24,14 +25,17 @@ const content = () => {
   const [activity, setActivity] = useState([]);
   const [nodata, setNodata] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-
-
+  const [isLoading, setIsLoading] = useState(true)
+  
   const getData = async () => {
     const user = await SecureStore.getItemAsync("user_id");
     const res = await fetch.fetchData({
       endpoint: `list-activity?search=user:${user}&fetch=-ans,-__v&pops=path:course$select:name exam image type completed`,
     });
     setActivity(res?.data);
+        if (res?.data) {
+      setIsLoading(false)
+    }
   };
 
   const onRefresh = () => {
@@ -47,7 +51,7 @@ const content = () => {
   return (
     <View>
       <SafeAreaView>
-        <ScrollView
+        <ScrollView 
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -56,7 +60,8 @@ const content = () => {
             />
           }
         >
-          <View style={styles.container}>
+          {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
+            : <View style={styles.container}>
             {activity.length <= 0 ? (
               <View style={styles.data_empty}>
                 <Ionicons name={"file-tray-outline"} size={35} color={"gray"} />
@@ -85,6 +90,7 @@ const content = () => {
               </View>
             )}
           </View>
+             }  
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -104,5 +110,9 @@ const styles = StyleSheet.create({
     height: HEIGHT - 200,
     justifyContent: "center",
     alignItems: "center",
-  },
+  }, loading: {
+    height: HEIGHT - 200,
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });

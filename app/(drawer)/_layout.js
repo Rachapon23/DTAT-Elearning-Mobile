@@ -9,6 +9,7 @@ import useCheckLogin from "hook/useCheckLogin";
 import { router, usePathname } from "expo-router";
 import useFetch from "hook/useFetch";
 import { useRoute } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const getStorageValue = async (key) => {
     const value = await SecureStore.getItemAsync(key);
@@ -31,10 +32,12 @@ const UserDrawer = (change) => {
     const path = usePathname()
 
     const HeaderDrawer = () => {
+        StatusBar.setBackgroundColor('#9fbbf6')
         return (
             <View style={{
-                paddingTop: StatusBar.currentHeight + 5,
+                paddingTop: StatusBar.currentHeight - 20,
                 backgroundColor: "#9fbbf6",//"transparent",
+                // backgroundColor: "red",//"transparent",
             }} />
         )
     }
@@ -167,13 +170,12 @@ const UserDrawer = (change) => {
             screenOptions={{
                 header: () => <HeaderDrawer />,
                 headerStyle: {
-                    backgroundColor: "black",
+                    backgroundColor: "#9fbbf6",
                 },
                 tabBarActiveTintColor: "tomato",
                 tabBarInactiveTintColor: "gray",
-                swipeEdgeWidth: 200,
+                swipeEdgeWidth: 0,
                 swipeEnabled: isLoggedIn,
-                tabBarComponent: ({ navigation }) => console.log(navigation)
             }}
         >
         </Drawer>
