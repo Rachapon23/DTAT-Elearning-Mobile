@@ -4,40 +4,34 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Theme1 from "theme/Theme1";
 import * as SecureStore from "expo-secure-store";
-import { useCallback, useEffect, useState } from "react";
-import useCheckLogin from "hook/useCheckLogin";
+import { useEffect, useState } from "react";
 import { router, usePathname } from "expo-router";
-import useFetch from "hook/useFetch";
-import { useRoute } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const getStorageValue = async (key) => {
     const value = await SecureStore.getItemAsync(key);
     if (value) {
-        // alert('You got: ' + value);
         return value
     }
-    // alert('No value store in this key');
     return null;
 }
 
 
 const UserDrawer = (change) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [firstname, setFirstName] = useState(null);
     const [lastname, setLastName] = useState(null);
     const [employee, setEmployee] = useState(null);
     const [role, setRole] = useState(null);
     const [activePage, setActivePage] = useState(null);
-    const path = usePathname()
+    const path = usePathname();
+    const [isDrawerOpen, setIsDrawerOpen] = useState(null);
 
     const HeaderDrawer = () => {
         StatusBar.setBackgroundColor('#9fbbf6')
         return (
             <View style={{
                 paddingTop: StatusBar.currentHeight - 20,
-                backgroundColor: "#9fbbf6",//"transparent",
-                // backgroundColor: "red",//"transparent",
+                backgroundColor: "#9fbbf6",
             }} />
         )
     }
@@ -169,9 +163,6 @@ const UserDrawer = (change) => {
             drawerContent={renderContent}
             screenOptions={{
                 header: () => <HeaderDrawer />,
-                headerStyle: {
-                    backgroundColor: "#9fbbf6",
-                },
                 tabBarActiveTintColor: "tomato",
                 tabBarInactiveTintColor: "gray",
                 swipeEdgeWidth: 0,
