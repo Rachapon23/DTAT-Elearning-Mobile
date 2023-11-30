@@ -9,21 +9,28 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Carousel, { Pagination } from "react-native-snap-carousel";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, Stack, useRouter } from "expo-router";
-
 import { REACT_APP_IMG } from "@env";
 import * as SecureStore from "expo-secure-store";
 
-const AUTHTOKEN = SecureStore.getItemAsync("token");
+
+
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
 const DEFAULT_IMAGE =
   "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
 
+const getStorageValue = async (key) => {
+  const value = await SecureStore.getItemAsync(key);
+  if (value) {
+    return value
+  }
+  return null;
+}
+
+
 const CarouselCardItem = ({ item, index }) => {
-  // console.log("ITEM",index,":: ",item?.image?.name)
-  // console.log("ITEM URL:: ",REACT_APP_IMG+"/course/"+item?.image?.name)
   return (
     <View style={styles.container} key={index}>
       <View style={styles.course}>
@@ -83,9 +90,27 @@ const styles = StyleSheet.create({
 });
 
 const Slider = ({ items }) => {
+
   const isCarousel = useRef(null);
   const [index, setIndex] = useState(0);
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const checkLogin = async () => {
+    const token = await getStorageValue("token");
+    const role = await getStorageValue("role");
+    const firstname = await getStorageValue("firstname")
+    const lastname = await getStorageValue("lastname")
+    const employee = await getStorageValue("employee")
+    setIsLoggedIn(
+      token !== null &&
+      firstname !== null &&
+      firstname !== null &&
+      lastname !== null &&
+      employee !== null &&
+      role !== null
+    );
+  }
 
   const navigate = (href) => {
     if (!href) return;
@@ -93,15 +118,16 @@ const Slider = ({ items }) => {
   };
 
   const handleTouchEnd = (e) => {
-    // enter path of course
-    // navigate('/');
-    if (!AUTHTOKEN) {
+    if (!isLoggedIn) {
       navigate('/login');
     } else {
-      // console.log(`/enroll/${items[index]?._id}`);
       navigate(`/enroll/${items[index]?._id}`);
     }
   }
+
+  useEffect(() => {
+    checkLogin()
+  }, [])
 
   return (
     <View>
