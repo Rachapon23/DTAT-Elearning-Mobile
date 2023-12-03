@@ -11,11 +11,11 @@ import {
     Dimensions,
     TouchableOpacity,
     Alert,
-    ProgressBarAndroid,
     ProgressViewIOS,
     ActivityIndicator,
     RefreshControl,
 } from "react-native";
+import ProgressBar from 'react-native-progress/Bar';
 import { REACT_APP_IMG } from "@env";
 import { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
@@ -268,13 +268,12 @@ const content = () => {
                                 <View key={index} style={styles.box}>
                                     <Text>Plant: {item.plant.name}</Text>
                                     <Text>Amount: {item.current} / {item.maximum}</Text>
-                                    {true ? <View>
-                                        <ProgressBarAndroid
-                                            styleAttr="Horizontal"
-                                            indeterminate={false}
+                                    {true ? <View style={{paddingTop: 5}}>
+                                        <ProgressBar
+                                            width={null}
                                             progress={persen}
+                                            indeterminate={false}
                                         />
-
                                     </View> : <View>
                                         <ProgressViewIOS
                                             style={styles.progress}
