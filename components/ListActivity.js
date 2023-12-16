@@ -10,18 +10,24 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "expo-router";
+import cover_image from 'public/student.webp'
 import { REACT_APP_IMG } from "@env";
 
 const WIDTH = Dimensions.get("window").width;
-const DEFAULT_IMAGE =
-  "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
+const DEFAULT_IMAGE = cover_image;
+
+const imgSrcSelector = (src = null) => {
+  return src ? { uri: REACT_APP_IMG + "/course/" + src } : DEFAULT_IMAGE;
+}
 
 const ListCourse = ({ item, course, exam, activity }) => {
 
+  const [coverImage, setCoverImage] = useState(imgSrcSelector(item ? item?.course?.image?.name : null));
+
   const router = useRouter();
-  const navigate = (course,exam,activity) => {
+  const navigate = (course, exam, activity) => {
     if (!course && !exam && !activity) return;
     // router.push(`exam/{"exam":"${exam}","activity":"${activity}","course":"${course}"}`);
     router.push(`course/{"exam":"${exam}","activity":"${activity}","course":"${course}"}`);
@@ -33,18 +39,15 @@ const ListCourse = ({ item, course, exam, activity }) => {
       <TouchableOpacity
         style={[styles.box, { width: WIDTH - 20 }]}
         onPress={() => {
-          navigate(course,exam,activity);
+          navigate(course, exam, activity);
         }}
       >
         <View style={styles.inbox}>
           <View style={{ height: "100%", width: "50%" }}>
             <Image
-              source={{
-                uri: item?.course?.image?.name
-                  ? REACT_APP_IMG + "/course/" + item?.course?.image?.name
-                  : DEFAULT_IMAGE,
-              }}
+              source={coverImage}
               style={styles.image}
+              onError={() => setCoverImage(DEFAULT_IMAGE)}
             />
           </View>
           <View style={{ height: "100%", width: "50%", padding: 10 }}>

@@ -51,7 +51,7 @@ const content = () => {
     }
 
     async function sendExam() {
-        console.log('send:', params?.activity, { answer: answer })
+        // console.log('send:', params?.activity, { answer: answer })
 
         const res = await fetch.fetchData({
             method: "PUT",
@@ -59,7 +59,7 @@ const content = () => {
             payload: { answer: answer }
         })
             .then(res => {
-                console.log('res submmit:', res)
+                // console.log('res submmit:', res)
                 router.push(`course/{"exam":"${params?.exam}","activity":"${params?.activity}","course":"${params?.course}"}`);
             }).catch(err => {
                 console.log(err)
@@ -72,20 +72,20 @@ const content = () => {
     }
 
     async function fetchActivity(course_id, activity_id) {
-        console.log('course_id:', course_id)
-        console.log('activity_id:', activity_id)
+        // console.log('course_id:', course_id)
+        // console.log('activity_id:', activity_id)
         const user_id = await SecureStore.getItemAsync('user_id')
         const res = await fetch.fetchData({
             method: 'GET',
             endpoint: `get-activity/${activity_id}`,
             query: `?search=user:${user_id},course:${course_id}&fetch=completed,score_value,score_max`,
         })
-        console.log('res:', res.data)
+        // console.log('res:', res.data)
         setResult(res.data)
     }
 
     useEffect(() => {
-        console.log('params:', params)
+        // console.log('params:', params)
         if (params?.course) fetchActivity(params?.course, params?.activity)
     }, [])
 
