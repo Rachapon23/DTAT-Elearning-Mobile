@@ -14,9 +14,16 @@ import React from "react";
 
 const WIDTH = Dimensions.get("window").width;
 
-const ListCalendar = ({ item }) => {
-  console.log(item)
+const ListCalendar = ({ item,setCurrent }) => {
+  // console.log(item)
+
+  const jumpdate = () => {
+    console.log((item?.end).substring(0,10))
+    setCurrent((item?.end).substring(0,10))
+  }
+
   return (
+     <TouchableOpacity onPress={jumpdate}>
     <View style={styles.box}>
       <Text style={styles.title}>{item?.title}</Text>
       <View style={styles.date}>
@@ -25,6 +32,7 @@ const ListCalendar = ({ item }) => {
         <View style={[styles.color, { backgroundColor: item?.color }]}/>
       </View>
     </View>
+    </TouchableOpacity>
   );
 };
 

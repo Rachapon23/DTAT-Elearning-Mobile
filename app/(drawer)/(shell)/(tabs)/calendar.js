@@ -30,6 +30,9 @@ const content = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true)
 
+  var todayDate = new Date().toISOString().slice(0, 10);
+  const [current, setCurrent] = useState(todayDate);
+
   var getDaysArray = function (start, end) {
     for (var arr = [], dt = new Date(start); dt < new Date(end); dt.setDate(dt.getDate() + 1)) {
       let date_new = dt
@@ -130,6 +133,11 @@ const content = () => {
     getData();
   }, []);
 
+  const jumptoday = () => {
+    console.log(todayDate)
+    setCurrent(todayDate)
+  }
+
   return (
     <View>
       <SafeAreaView>
@@ -151,14 +159,28 @@ const content = () => {
             >
               <Calendar
                 markingType={"multi-period"}
+                current={current}
+                key={current}
                 markedDates={evenRender}
+                // markedDates={{
+                //   '2023-12-01': {selected: true, marked: true, selectedColor: 'blue'},
+                //   '2023-12-02': {marked: true},
+                //   '2023-12-03': {selected: true, marked: true, selectedColor: 'blue'}
+                // }}
                 style={[styles.calendar, { width: WIDTH - 20 }]}
               />
 
               {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
-                : <View>
+                : <View style={{ marginTop: 20 }}>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <TouchableOpacity style={styles.today} onPress={jumptoday}>
+                      <Text>To day</Text>
+                    </TouchableOpacity>
+                  </View>
                   {evens?.length >= 0 && evens?.map((item, index) => (
-                    <ListCalendar key={index} item={item} />
+
+                    <ListCalendar key={index} item={item} setCurrent={setCurrent} />
+
                   ))}
                 </View>
               }
@@ -183,9 +205,19 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(159, 187, 246, 0.2)",
     height: 320,
     marginBottom: 30,
-  }, loading: {
+  },
+  loading: {
     height: HEIGHT - 600,
     justifyContent: "center",
     alignItems: "center",
+  },
+  today: {
+    borderRadius: 5,
+    backgroundColor: "rgba(159, 187, 246, 0.2)",
+    height: 40,
+    width: 80,
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
