@@ -10,18 +10,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import { Link, Stack } from "expo-router";
 import Theme1 from "theme/Theme1";
-
-const ScreenHeaderButton = ({ text, to }) => {
-  return (
-    <Link href={to} asChild>
-      <TouchableOpacity>
-        <Text>{text}</Text>
-      </TouchableOpacity>
-    </Link>
-  );
-};
 
 const content = () => {
   return (

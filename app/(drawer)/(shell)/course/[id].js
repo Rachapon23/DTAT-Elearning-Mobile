@@ -19,13 +19,17 @@ import { useEffect, useState } from "react";
 import Theme1 from "theme/Theme1";
 import ListTopic from "components/ListTopic";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import cover_image from 'public/student.webp'
 import { useRouter } from "expo-router";
 
 const WIDTH = Dimensions.get("window").width;
 const HEIGHT = Dimensions.get("window").height;
 
-const DEFAULT_IMAGE =
-  "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
+const DEFAULT_IMAGE = cover_image;
+
+const imgSrcSelector = (src = null) => {
+  return src ? { uri: REACT_APP_IMG + "/course/" + src } : DEFAULT_IMAGE;
+}
 
 const content = () => {
   const { id } = useLocalSearchParams();
@@ -33,9 +37,10 @@ const content = () => {
 
   const [course, setCourse] = useState([]);
   const [topics, setTopics] = useState([]);
-  const [teacherProfile, setTeacherProfile] = useState();
+  const [teacherProfile, setTeacherProfile] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true)
+  const [coverImage, setCoverImage] = useState(imgSrcSelector(course ? course?.image?.name : null));
 
   const fetch = useFetch();
   const router = useRouter();
@@ -43,23 +48,25 @@ const content = () => {
   const navigate = (href) => {
     if (!href) return;
     router.push(href);
-    // console.log(href)
   };
 
   const getData = async () => {
-    const data = await fetch.fetchData({
+    const course = await fetch.fetchData({
       endpoint: `get-course/${params?.course}?pops=path:teacher$select:firstname lastname _id,path:exam$select:name`,
     });
-    setCourse(data?.data);
+    setCourse(course?.data);
+
     const topics = await fetch.fetchData({
       endpoint: `list-topic/course/${params?.course}`,
     });
     setTopics(topics);
-    console.log("teacherProfile:", course?.teacher?._id)
+
+    console.log("teacherProfile:", course?.data?.teacher?._id)
     const teacher = await fetch.fetchData({
-      endpoint: `get-profile/user/${course?.teacher?._id}`,
+      endpoint: `get-profile/user/${course?.data?.teacher?._id}`,
     });
     setTeacherProfile(teacher?.data);
+
     if (topics) {
       setIsLoading(false)
     }
@@ -74,15 +81,17 @@ const content = () => {
   }, []);
 
   const alertTeacher = () => {
-    console.log(teacherProfile)
-    Alert.alert('Teacher Profile',
-      `Name: ${teacherProfile?.firstname} ${teacherProfile?.lastname}\nEmail: \nTel: ${teacherProfile?.tel}`
-      ,
-      [
-        {
-          text: 'OK', onPress: () => { }
-        },
-      ]);
+    if (teacherProfile) {
+      Alert.alert('Teacher Profile',
+        `Name: ${teacherProfile?.firstname} ${teacherProfile?.lastname}\nEmail: \nTel: ${teacherProfile?.tel}`
+        ,
+        [
+          {
+            text: 'OK', onPress: () => { }
+          },
+        ]);
+    }
+
   }
 
   return (
@@ -95,17 +104,14 @@ const content = () => {
             onRefresh={onRefresh}
           />
         }
-       >
+      >
         {isLoading ? <View style={styles.loading}><ActivityIndicator size="large" color="#ffa69a" /></View>
           : <View style={styles.container}>
             <View style={styles.header}>
               <Image
-                source={{
-                  uri: course?.image?.name
-                    ? REACT_APP_IMG + "/course/" + course?.image?.name
-                    : DEFAULT_IMAGE,
-                }}
+                source={coverImage}
                 style={styles.image}
+                onError={() => setCoverImage(DEFAULT_IMAGE)}
               />
               <View style={styles.body}>
                 <Text style={styles.text_1}>{course?.name}</Text>

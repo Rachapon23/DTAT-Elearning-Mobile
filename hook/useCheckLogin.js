@@ -1,22 +1,30 @@
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 
+const getStorageValue = async (key) => {
+    const value = await SecureStore.getItemAsync(key);
+    if (value) {
+        return value
+    }
+    return null;
+}
+
 const useCheckLogin = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [debug, setDebug] = useState(null);
 
     const checkLogin = async () => {
-        console.log('WTGG')
-        // const token = await SecureStore.getItemAsync("token");
-        // const file_token = await SecureStore.getItemAsync("file_token");
-        // const firstname = await SecureStore.getItemAsync("firstname");
-        // const role = await SecureStore.getItemAsync("role");
-        // const user_id = await SecureStore.getItemAsync("user_id");
-        console.log('isLoggedIn:')
-        console.log('debug:', debug)
-        // console.log(token);
-        // setDebug(token)
-        // setIsLoggedIn(() => token != null);
+        const token = await getStorageValue("token");
+        const role = await getStorageValue("role");
+        const firstname = await getStorageValue("firstname")
+        const lastname = await getStorageValue("lastname")
+        const employee = await getStorageValue("employee")
+        setIsLoggedIn(
+            token !== null &&
+            role !== null &&
+            firstname !== null &&
+            lastname !== null &&
+            employee !== null
+        )
     }
 
     useEffect(() => {

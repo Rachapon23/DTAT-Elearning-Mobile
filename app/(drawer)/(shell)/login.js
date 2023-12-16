@@ -53,10 +53,12 @@ const content = () => {
       payload,
     });
     if (!data?.error) {
-      console.log("data=>", JSON.stringify(data?.token))
+      // console.log("data=>", JSON.stringify(data?.token))
       await SecureStore.setItemAsync("token", data?.token);
       await SecureStore.setItemAsync("file_token", data?.file_token);
-      await SecureStore.setItemAsync("firstname", data?.payload?.user.firstname);
+      await SecureStore.setItemAsync("employee", data?.payload?.user?.employee);
+      await SecureStore.setItemAsync("firstname", data?.payload?.user?.firstname);
+      await SecureStore.setItemAsync("lastname", data?.payload?.user?.lastname);
       await SecureStore.setItemAsync("role", data?.payload?.user?.role);
       await SecureStore.setItemAsync("user_id", data?.payload?.user?.user_id);
       setIsLoading(false)
@@ -64,7 +66,6 @@ const content = () => {
       router.replace("/homein");
     } else {
       setIsLoading(false)
-
       alert(data?.error);
     }
   };
