@@ -12,14 +12,16 @@ import Carousel, { Pagination } from "react-native-snap-carousel";
 import React, { useState, useRef, useEffect } from "react";
 import { Link, Stack, useRouter } from "expo-router";
 import { REACT_APP_IMG } from "@env";
+import cover_image from 'public/student.webp'
 import * as SecureStore from "expo-secure-store";
-
-
 
 const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.9);
-const DEFAULT_IMAGE =
-  "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
+const DEFAULT_IMAGE = cover_image;
+
+const imgSrcSelector = (src = null) => {
+  return src ? { uri: REACT_APP_IMG + "/course/" + src } : DEFAULT_IMAGE;
+}
 
 const getStorageValue = async (key) => {
   const value = await SecureStore.getItemAsync(key);
@@ -28,26 +30,6 @@ const getStorageValue = async (key) => {
   }
   return null;
 }
-
-
-const CarouselCardItem = ({ item, index }) => {
-  return (
-    <View style={styles.container} key={index}>
-      <View style={styles.course}>
-        <Image
-          source={{
-            uri: item?.image?.name
-              ? REACT_APP_IMG + "/course/" + item?.image?.name
-              : DEFAULT_IMAGE,
-          }}
-          style={styles.image}
-        />
-        <Text style={styles.header}>{item.name}</Text>
-        <Text style={styles.body}>{item.detail}</Text>
-      </View>
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -95,6 +77,27 @@ const Slider = ({ items }) => {
   const [index, setIndex] = useState(0);
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [coverImage, setCoverImage] = useState(imgSrcSelector(items ? items[index]?.image?.name : null));
+
+  const CarouselCardItem = ({ item, index }) => {
+    return (
+      <TouchableOpacity onPress={handleTouchEnd}>
+        <View style={styles.container} key={index}>
+          <View style={styles.course}>
+            <Image
+              source={coverImage}
+              style={styles.image}
+              onError={() => setCoverImage(DEFAULT_IMAGE)}
+            />
+            <Text style={styles.header}>{item.name}</Text>
+            <Text style={styles.body}>{item.detail}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+
+    );
+  };
+
 
   const checkLogin = async () => {
     const token = await getStorageValue("token");
@@ -131,6 +134,7 @@ const Slider = ({ items }) => {
 
   return (
     <View>
+
       <Carousel
         layout="default"
         layoutCardOffset={9}
@@ -142,7 +146,7 @@ const Slider = ({ items }) => {
         // inactiveSlideShift={0}
         onSnapToItem={(index) => setIndex(index)}
         useScrollView={true}
-        onTouchEnd={handleTouchEnd}
+      // onTouchEnd={handleTouchEnd}
       />
       <Pagination
         dotsLength={items?.length}
@@ -155,6 +159,7 @@ const Slider = ({ items }) => {
           marginHorizontal: 0,
           backgroundColor: "rgba(0, 0, 0, 0.92)",
         }}
+
         inactiveDotOpacity={0.4}
         inactiveDotScale={0.6}
         tappableDots={true}

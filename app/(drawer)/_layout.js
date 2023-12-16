@@ -1,5 +1,6 @@
 import Drawer from "expo-router/drawer";
-import { Text, View, StatusBar } from "react-native";
+import { Text, View, StatusBar, Platform } from "react-native";
+import constants from "expo-constants";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Theme1 from "theme/Theme1";
@@ -7,14 +8,16 @@ import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import { router, usePathname } from "expo-router";
 
+const statusBarIOS = constants.statusBarHeight;
+
 const getStorageValue = async (key) => {
     const value = await SecureStore.getItemAsync(key);
     if (value) {
+        // alert(value)
         return value
     }
     return null;
 }
-
 
 const UserDrawer = (change) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,13 +30,27 @@ const UserDrawer = (change) => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(null);
 
     const HeaderDrawer = () => {
-        StatusBar.setBackgroundColor('#9fbbf6')
-        return (
-            <View style={{
-                paddingTop: StatusBar.currentHeight - 20,
-                backgroundColor: "#9fbbf6",
-            }} />
-        )
+        if (Platform.OS !== 'ios') {
+            StatusBar.setBackgroundColor('#9fbbf6')
+            return (
+                <View style={{
+                    paddingTop: StatusBar.currentHeight - 20,
+                    backgroundColor: "#9fbbf6",
+                }} />
+            )
+        } else {
+            return (
+                <View style={{
+                    paddingTop: statusBarIOS - 50,
+                    backgroundColor: "#9fbbf6",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center"
+                }} />
+            )
+        }
+
+        
     }
 
     const DrawerContent = () => {
@@ -155,8 +172,6 @@ const UserDrawer = (change) => {
         setActivePage(path.substring(1))
         checkLogin()
     }, [change])
-
-    // console.log('e',e)
 
     return (
         <Drawer

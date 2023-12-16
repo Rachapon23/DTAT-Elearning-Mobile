@@ -10,54 +10,56 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "expo-router";
+import cover_image from 'public/student.webp'
 import { REACT_APP_IMG } from "@env";
 
 const WIDTH = Dimensions.get("window").width;
-const DEFAULT_IMAGE =
-  "https://prod-discovery.edx-cdn.org/media/course/image/0e575a39-da1e-4e33-bb3b-e96cc6ffc58e-8372a9a276c1.small.png";
+const DEFAULT_IMAGE = cover_image;
+
+const imgSrcSelector = (src = null) => {
+  return src ? { uri: REACT_APP_IMG + "/course/" + src } : DEFAULT_IMAGE;
+}
 
 const ListCourse = ({ item, to = null }) => {
 
   const router = useRouter();
+  const [coverImage, setCoverImage] = useState(imgSrcSelector(item?.image?.name));
 
   const navigate = (href) => {
     if (!href) return;
     router.push(href);
   };
-    return (
-      <View>
-        <TouchableOpacity
-          style={[styles.box, { width: WIDTH - 20 }]}
-          onPress={() => {
-            // console.log("NEXT: ", item?._id);
-            navigate(to);
-          }}
-        >
-          <View style={styles.inbox}>
-            <View style={{ height: "100%", width: "50%" }}>
-              <Image
-                source={{
-                  uri: item?.image?.name
-                    ? REACT_APP_IMG + "/course/" + item?.image?.name
-                    : DEFAULT_IMAGE,
-                }}
-                style={styles.image}
-              />
-            </View>
-            <View style={{ height: "100%", width: "50%", padding: 10 }}>
-              <Text style={styles.header}>{item?.name}</Text>
-              <View style={styles.badge}>
-                <Text style={styles.body}>
-                  {item?.type ? "Public" : "Private"}
-                </Text>
-              </View>
+
+  return (
+    <View>
+      <TouchableOpacity
+        style={[styles.box, { width: WIDTH - 20 }]}
+        onPress={() => {
+          navigate(to);
+        }}
+      >
+        <View style={styles.inbox}>
+          <View style={{ height: "100%", width: "50%" }}>
+            <Image
+              source={coverImage}
+              style={styles.image}
+              onError={() => setCoverImage(DEFAULT_IMAGE)}
+            />
+          </View>
+          <View style={{ height: "100%", width: "50%", padding: 10 }}>
+            <Text style={styles.header}>{item?.name}</Text>
+            <View style={styles.badge}>
+              <Text style={styles.body}>
+                {item?.type ? "Public" : "Private"}
+              </Text>
             </View>
           </View>
-        </TouchableOpacity>
-      </View>
-    );
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
 };
 
 export default ListCourse;

@@ -13,7 +13,18 @@ const TabsLayout = () => {
 
   const checkLogin = async () => {
     const link = await SecureStore.getItemAsync("token");
-    setLinkHome(link ? '/homein' : '/home')
+    const role = await SecureStore.getItemAsync("role");
+    const firstname = await SecureStore.getItemAsync("firstname");
+    const lastname = await SecureStore.getItemAsync("lastname");
+    const employee = await SecureStore.getItemAsync("employee");
+    setLinkHome(
+        link &&
+        role &&
+        firstname &&
+        lastname &&
+        employee ?
+        '/homein' : '/home'
+    );
   }
 
   useEffect(() => {
@@ -59,6 +70,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="learning"
         options={{
+          title: 'Learning',
           headerTitleAlign: "center",
           headerTitle: "",
           headerShadowVisible: false,
@@ -97,6 +109,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="homein"
         options={{
+          title: 'Home',
           headerTitleAlign: "center",
           headerTitle: "",
           headerShadowVisible: false,
@@ -116,6 +129,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="calendar"
         options={{
+          title: 'Calendar',
           headerTitleAlign: "center",
           headerTitle: "",
           headerShadowVisible: false,
@@ -135,6 +149,7 @@ const TabsLayout = () => {
       <Tabs.Screen
         name="browse-course"
         options={{
+          title: 'Browse Course',
           headerTitleAlign: "center",
           headerTitle: "",
           headerShadowVisible: false,
